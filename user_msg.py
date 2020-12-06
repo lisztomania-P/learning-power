@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+# @Author   : lisztomania
+# @Date     : 2020/12/2
+# @Software : Pycharm
+# @Version  : Python 3.8.2
+# @File     : user_msg.py
+# @Function : 输出信息共享变量
+
+from typing import Dict
+from configuration import TASK_OPTIONS, TASK_ID
+USER_MSG: Dict = None
+USER_TASKS_NUMBER: Dict = None
+USER_ARTICLE_TASKS: int = 0
+USER_ARTICLE_PLAYING: int = 0
+USER_VIDEO_TASKS: int = 0
+USER_VIDEO_PLAYING: int = 0
