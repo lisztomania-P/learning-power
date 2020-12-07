@@ -6,12 +6,14 @@
 # @Version  : Python 3.8.2
 # @File     : task_manage.py
 # @Function : 任务管理
-
+import get_random
 import user_msg
 from typing import Dict, List
 from selenium.webdriver.chrome.webdriver import WebDriver
 from analysis import Analysis_Msg, Analysis_Task, clear_files
-from configuration import TASK_ID, USER_KEYS, TASK_OPTIONS
+from configuration import TASK_ID, USER_KEYS, TASK_OPTIONS, VIDEO_TIME, \
+    VIDEO_ACC_TIME, ARTICLE_ACC_TIME, DAILY_ANSWER_ACC_TIME, ARTICLE_TIME
+from daily_answer import Daily_Answer
 from daily_article import Daily_Article
 from video import Video
 
@@ -42,8 +44,8 @@ class Task_Manage(object):
         self.__driver = driver
         # 初始化信息查询窗口
         self.__windows['score'] = self.__driver.current_window_handle
+        self.__refresh_user_msg()
         self.__init_user_tasks()
-        self.__init_tasks()
 
     # 刷新用户信息
     def __refresh_user_msg(self):
@@ -144,7 +146,16 @@ class Task_Manage(object):
                 self.__tasks['article'].index(task) + 1
             daily_article = Daily_Article()
             task_url = task[1]['url']
-            daily_article.do(task_driver=self.__driver, task_url=task_url)
+            task_time = get_random.get_random_int(
+                a=ARTICLE_TIME[0],
+                b=ARTICLE_TIME[1]
+            )
+            user_msg.USER_ARTICLE_TIME = task_time
+            daily_article.do(
+                task_driver=self.__driver,
+                task_url=task_url,
+                timeout=task_time
+            )
             self.__analysis_task.update_parend_son(task=task)
             self.__init_user_tasks()
             self.__change_window_task()
@@ -166,7 +177,14 @@ class Task_Manage(object):
             user_msg.USER_VIDEO_PLAYING = self.__tasks['video'].index(task) + 1
             video = Video()
             task_url = task[1]['url']
-            video.do(task_driver=self.__driver, task_url=task_url)
+            sec = get_random.get_random_int(a=0, b=9)
+            video_time = VIDEO_TIME.format(sec)
+            user_msg.USER_VIDEO_TIME = video_time
+            video.do(
+                task_driver=self.__driver,
+                task_url=task_url,
+                timeout=video_time
+            )
             self.__analysis_task.update_parend_son(task=task)
             self.__init_user_tasks()
             self.__change_window_task()
@@ -181,26 +199,53 @@ class Task_Manage(object):
         else:
             return True
 
+    # 执行任务(每日答题)
+    def __do_daily_answer_task(self):
+        self.__change_window_task()
+        daily_answer = Daily_Answer(task_driver=self.__driver)
+        daily_answer.do()
+        self.__init_user_tasks()
+        self.__change_window_task()
+
+    def __check_daily_answer_bar(self) -> bool:
+        self.__init_user_tasks()
+        if self.__user_tasks_number[self.__task_id[6]]:
+            return False
+        else:
+            return True
+
     # 完成文章任务
     def __accomplish_article(self):
         while not self.__check_article_bar():
+            if not self.__analysis_task:
+                self.__init_tasks()
             self.__check_article_tasks()
             self.__do_article_task()
 
     # 完成视频任务
     def __accomplish_video(self):
         while not self.__check_video_bar():
+            if not self.__analysis_task:
+                self.__init_tasks()
             self.__check_video_tasks()
             self.__do_video_task()
+
+    # 完成每日答题任务
+    def __accomplish_daily_answer(self):
+        while not self.__check_daily_answer_bar():
+            self.__do_daily_answer_task()
 
     @clear_files
     def start(self):
         if TASK_OPTIONS[1][1]:
             self.__accomplish_article()
-            print("文章任务完成")
+            user_msg.USER_ARTICLE_TIME = ARTICLE_ACC_TIME
         if TASK_OPTIONS[2][1]:
             self.__accomplish_video()
-            print("视频任务完成")
+            user_msg.USER_VIDEO_TIME = VIDEO_ACC_TIME
+        if TASK_OPTIONS[3][1]:
+            self.__accomplish_daily_answer()
+            user_msg.USER_DAILY_ANSWER_TIME_SLEEP = DAILY_ANSWER_ACC_TIME
         self.__driver.quit()
 
     def get_tasks(self) -> Dict:

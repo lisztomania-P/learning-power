@@ -13,22 +13,30 @@ from configuration import TASK_OPTIONS
 
 @out_msg.out_print
 def __select_task() -> str:
-    explain = '''请选择任务:
-    1、{}    2、{}
-    选择:'''.format(TASK_OPTIONS[1][0], TASK_OPTIONS[2][0])
-    args = input(explain)
+    explain = "请选择任务:\n"
+    for key, value in TASK_OPTIONS.items():
+        explain += str(key) + '、' + value[0] + '\t'
+    explain += "\n选择(选项请使用空格隔开，退出输入0):"
+    args = input(explain).strip()
     return args
 
 
-def Select_task():
+def __clear_options():
+    for key in TASK_OPTIONS.keys():
+        TASK_OPTIONS[key][1] = False
+
+
+def Select_task() -> bool:
     while True:
         try:
+            __clear_options()
             arg = __select_task()
             option = [int(x) for x in arg.split(' ')]
+            if 0 in option:
+                return False
             for op in option:
                 TASK_OPTIONS[op][1] = True
-            break
-        except:
-            for key in TASK_OPTIONS.keys():
-                TASK_OPTIONS[key][1] = False
+            return True
+        except (KeyError, ValueError):
+            __clear_options()
             continue

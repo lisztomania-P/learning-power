@@ -18,5 +18,9 @@ login = Login(driver=driver)
 login.login()
 task_manage = Task_Manage(driver=driver)
 # 选择任务
-Select_task()
-task_manage.start()
+while True:
+    if Select_task():
+        task_manage.start()
+    else:
+        driver.quit()
+        break

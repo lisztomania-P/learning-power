@@ -8,28 +8,31 @@
 # @Function : 任务id:1 and 1002
 
 import time
-import random
+
+import check_task
+import get_random
 import out_msg
-from typing import Tuple
 from selenium.webdriver.chrome.webdriver import WebDriver
-from configuration import PAGE_ROLL_JS, MIX_ARG, ARTICLE_TIME
+from configuration import PAGE_ROLL_JS
 
 
 class Daily_Article(object):
     __success: bool = False
     __page_roll_js: str = PAGE_ROLL_JS
-    __article_time: Tuple = ARTICLE_TIME
 
     def __init__(self):
-        random.seed(a=MIX_ARG)
+        pass
 
     @out_msg.out_print
-    def do(self, task_driver: WebDriver, task_url: str):
+    def do(self, task_driver: WebDriver, task_url: str, timeout: int):
         task_driver.get(url=task_url)
-        for i in range(1, random.randint(
-                           self.__article_time[0], self.__article_time[1]
-                       )):
-            mix: float = random.uniform(0, 10)
+        if check_task.check_wrap(task_driver=task_driver):
+            return None
+        for i in range(1, timeout):
+            mix: float = get_random.get_random_float(
+                a=0,
+                b=10
+            )
             js: str = self.__page_roll_js.format(i*10+mix)
             task_driver.execute_script(script=js)
             time.sleep(1)

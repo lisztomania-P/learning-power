@@ -9,7 +9,8 @@
 
 import os
 import user_msg
-from configuration import TASK_ID, TASK_IDE
+from configuration import TASK_ID, TASK_IDE, ARTICLE_ACC_TIME, \
+    VIDEO_ACC_TIME, DAILY_ANSWER_ACC_TIME
 
 
 # 输出用户信息
@@ -51,22 +52,55 @@ def out_tasks_numbers():
 
 
 # 输出文章任务进度
-def out_article_number():
-    msg = '''文章任务:{play}/{max_task}'''
+def out_article_bar():
+    msg = '''文章任务:{play}/{max_task}\n'''
     msg = msg.format(
         play=user_msg.USER_ARTICLE_PLAYING,
         max_task=user_msg.USER_ARTICLE_TASKS
     )
+    date = '''单个执行时间:{sec}秒'''
+    if user_msg.USER_ARTICLE_TIME:
+        if user_msg.USER_ARTICLE_TIME == ARTICLE_ACC_TIME:
+            date = "文章任务已完成"
+        else:
+            date = date.format(sec=user_msg.USER_ARTICLE_TIME)
+        msg += date
     print(msg)
 
 
 # 输出视频任务进度
-def out_video_number():
-    msg = '''视频任务:{play}/{max_task}'''
+def out_video_bar():
+    msg = '''视频任务:{play}/{max_task}\n'''
     msg = msg.format(
         play=user_msg.USER_VIDEO_PLAYING,
         max_task=user_msg.USER_VIDEO_TASKS
     )
+    date = '''单个执行时间:{minute}'''
+    if user_msg.USER_VIDEO_TIME:
+        if user_msg.USER_VIDEO_TIME == VIDEO_ACC_TIME:
+            date = "视频任务已完成"
+        else:
+            date = date.format(minute=user_msg.USER_VIDEO_TIME)
+        msg += date
+    print(msg)
+
+
+# 输出每日答题任务进度
+def out_daily_answer_bar():
+    msg = '''每日答题任务:{play}/{max_task}\n'''
+    msg = msg.format(
+        play=user_msg.USER_DAILY_ANSWER_PLAYING,
+        max_task=user_msg.USER_DAILY_ANSWER_TASKS
+    )
+    time_msg = '随机等待时间:{time_sleep}秒'
+    if user_msg.USER_DAILY_ANSWER_TIME_SLEEP:
+        if user_msg.USER_DAILY_ANSWER_TIME_SLEEP == DAILY_ANSWER_ACC_TIME:
+            print("每日答题任务已完成")
+        else:
+            time_msg = time_msg.format(
+                time_sleep=user_msg.USER_DAILY_ANSWER_TIME_SLEEP
+            )
+        msg += time_msg
     print(msg)
 
 
@@ -78,9 +112,11 @@ def out_print(func):
             out_user_msg()
             out_tasks_numbers()
             if user_msg.TASK_OPTIONS[1][1]:
-                out_article_number()
+                out_article_bar()
             if user_msg.TASK_OPTIONS[2][1]:
-                out_video_number()
+                out_video_bar()
+            if user_msg.TASK_OPTIONS[3][1]:
+                out_daily_answer_bar()
         except:
             pass
         return func(*args, **kwargs)

@@ -11,9 +11,8 @@ import json
 import os
 import pickle
 import glob
-import random
-import time
 from typing import Dict, List
+import get_random
 from configuration import MSG_APIS, TASK_APIS, DB_PARENT_SON_FILE_PATH, \
     TASK_ID, DB_TEMP_DIR
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -225,28 +224,30 @@ class Analysis_Task(object):
     def get_article_tasks(self, task_number: int = 6) -> List:
         if len(self.__task_type['article']) < task_number:
             self.__refresh_tasks(key='article')
-        random.seed(a=time.time())
         tasks: List = []
         articles_len: int = len(self.__task_type['article'])
         while len(tasks) != task_number:
-            index = random.randint(0, articles_len - 1)
+            index = get_random.get_random_int(a=0, b=articles_len - 1)
             temp = self.__task_type['article'][index]
             if temp not in tasks:
                 tasks.append(temp)
+        for task in tasks:
+            self.__task_type['article'].remove(task)
         return tasks
 
     # 随机抽取视频任务
     def get_video_tasks(self, task_number: int = 6) -> List:
         if len(self.__task_type['video']) < task_number:
             self.__refresh_tasks(key='video')
-        random.seed(a=time.time())
         tasks: List = []
         videos_len: int = len(self.__task_type['video'])
         while len(tasks) != task_number:
-            index = random.randint(0, videos_len - 1)
+            index = get_random.get_random_int(a=0, b=videos_len - 1)
             temp = self.__task_type['video'][index]
             if temp not in tasks:
                 tasks.append(temp)
+        for task in tasks:
+            self.__task_type['video'].remove(task)
         return tasks
 
     # 刷新任务池

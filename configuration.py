@@ -26,8 +26,8 @@ DRIVER_FILE_PATH: str = os.path.join(DRIVER_DIR, 'chromedriver.exe')
 DB_PARENT_SON_FILE_PATH: str = os.path.join(DB_DIR, 'task_parent_son')
 
 # 登录API
-# LOGIN_API: str = "https://pc.xuexi.cn/points/login.html?ref=https%3A%2F%2Fwww.xuexi.cn%2F"
-LOGIN_API: str = "https://login.xuexi.cn/login/xuexiWeb?appid=dingoankubyrfkttorhpou&goto=https%3A%2F%2Foa.xuexi.cn&type=1&state=fbe275c2f0434707lKEktThJxGjhnT%2FZMU%2F0jCSkqlR-krUkgXkmUn0w3dq5FHmZBssbGiiPXtkPZAbz&check_login=https%3A%2F%2Fpc-api.xuexi.cn"
+LOGIN_API: str = "https://pc.xuexi.cn/points/login.html?ref=https%3A%2F%2Fwww.xuexi.cn%2F"
+# LOGIN_API: str = "https://login.xuexi.cn/login/xuexiWeb?appid=dingoankubyrfkttorhpou&goto=https%3A%2F%2Foa.xuexi.cn&type=1&state=fbe275c2f0434707lKEktThJxGjhnT%2FZMU%2F0jCSkqlR-krUkgXkmUn0w3dq5FHmZBssbGiiPXtkPZAbz&check_login=https%3A%2F%2Fpc-api.xuexi.cn"
 
 # 用户信息API
 MSG_APIS: Dict = {
@@ -45,7 +45,8 @@ MSG_APIS: Dict = {
 TASK_APIS: Dict = {
     'task_parent_api': "https://www.xuexi.cn/lgdata/channel-list.json?_st=26777175",
     'task_son_api': "https://www.xuexi.cn/lgdata/{}.json?_st=26777175",
-    'task_no_found_api': 'https://www.xuexi.cn/notFound.html'
+    'task_no_found_api': 'https://www.xuexi.cn/notFound.html',
+    'daily_answer_api': 'https://pc.xuexi.cn/points/exam-practice.html'
 }
 
 # 任务ID
@@ -151,6 +152,8 @@ PAGE_ROLL_JS: str = "document.documentElement.scrollTop={}"
 MIX_ARG: float = time.time()
 
 # 登录页面
+# 二维码iframe
+QR_CODE_IFRAME_ID: str = "ddlogin-iframe"
 # 二维码
 QR_CODE_CLASS_NAME: str = "login_qrcode_content"
 # 状态
@@ -159,11 +162,18 @@ QR_CODE_LOSE_IDE: str = "二维码失效，点击刷新"
 # 刷新
 QR_CODE_REFRESH_CLASS_NAME: str = "login_qrcode_refresh"
 
+# 维护页面
+WRAP_CLASS_NAME: str = "text-wrap"
+
 # 文章页面
 ARTICLE_TIME: Tuple = (75, 90)
+# 文章任务完成标志
+ARTICLE_ACC_TIME = -1
 
 # 视频页面
-VIDEO_TIME: str = "01:1{}"
+VIDEO_TIME: str = "01:2{}"
+# 视频任务完成标志
+VIDEO_ACC_TIME: str = "--:--"
 # 视频当前时间标签
 VIDEO_TIME_START_CLASS_NAME: str = "current-time"
 # 视频结束时间标签
@@ -179,10 +189,31 @@ VIDEO_PLAYING_CLASS_NAME: str = "prism-big-play-btn playing"
 # 视频暂停标识
 VIDEO_PAUSE_CLASS_NAME: str = "prism-big-play-btn pause"
 
+
+# 每日答题答案api
+DAILY_ANSWER_API: str = "https://pc-proxy-api.xuexi.cn/api/exam/service/common/deduplicateRandomSearchV3?limit=5&activityCode=QUIZ_ALL&forced=true"
+# 类型
+# 题目
+DAILY_ANSWER_TOPIC_CLASS_NAME: str = 'q-body'
+# 选择选项
+DAILY_ANSWER_CHOOSABLE_CLASS_NAME: str = 'q-answers'
+# 选择列表
+DAILY_ANSWER_CHOOSABLE_TAG_NAME: str = 'div'
+# 提交按钮容器
+DAILY_ANSWER_SUBMIT_CLASS_NAME: str = 'action-row'
+# 提交按钮
+DAILY_ANSWER_SUBMIT_TAG_NAME: str = 'button'
+# 答题间隔
+DAILY_ANSWER_TIME_SLEEP: Tuple = (3, 5)
+# 答题任务完成标志
+DAILY_ANSWER_ACC_TIME: float = -1.0
+
+
 # 任务选项
 TASK_OPTIONS: Dict = {
     1: ['文章', False],
     2: ['视频', False],
+    3: ['每日答题', False]
 }
 
 # 驱动配置

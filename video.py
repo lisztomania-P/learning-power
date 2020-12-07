@@ -8,15 +8,18 @@
 # @Function : 视频学习
 
 import time
-import random
+
+import check_task
+import get_random
 import out_msg
 from selenium.webdriver.support.expected_conditions import \
     presence_of_element_located
-from configuration import MIX_ARG, VIDEO_PLAY_CLASS_NAME1, \
+
+from configuration import VIDEO_PLAY_CLASS_NAME1, \
     VIDEO_PLAY_CLASS_NAME2, VIDEO_PLAY_STATUS_CLASS_NAME, \
     VIDEO_TIME_START_CLASS_NAME, VIDEO_TIME_END_CLASS_NAME, \
     VIDEO_PLAYING_CLASS_NAME, VIDEO_PAUSE_CLASS_NAME, \
-    VIDEO_TIME, PAGE_ROLL_JS
+    PAGE_ROLL_JS
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
@@ -27,7 +30,6 @@ from selenium.webdriver.common.by import By
 class Video(object):
     __success: bool = False
     __page_roll_js: str = PAGE_ROLL_JS
-    __video_time = VIDEO_TIME.format(random.randint(0, 9))
     __video_time_start_class_name = VIDEO_TIME_START_CLASS_NAME
     __video_time_end_class_name = VIDEO_TIME_END_CLASS_NAME
     __play_class_name1 = VIDEO_PLAY_CLASS_NAME1
@@ -37,7 +39,7 @@ class Video(object):
     __pause_class_name = VIDEO_PAUSE_CLASS_NAME
 
     def __init__(self):
-        random.seed(a=MIX_ARG)
+        pass
 
     # 点击播放按钮2
     def __play(self, task_driver: WebDriver):
@@ -53,12 +55,17 @@ class Video(object):
 
     # 获取进度
     @out_msg.out_print
-    def do(self, task_driver: WebDriver, task_url: str):
+    def do(self, task_driver: WebDriver, task_url: str, timeout: str):
         task_driver.get(url=task_url)
+        if check_task.check_wrap(task_driver=task_driver):
+            return None
         # 捕获元素
         wait: WebDriverWait = WebDriverWait(task_driver, 10)
         # 混淆值
-        mix: float = random.uniform(0, 10)
+        mix: float = get_random.get_random_float(
+            a=0,
+            b=10
+        )
         js: str = self.__page_roll_js.format(450 + mix)
         # 滑动到指定位置
         task_driver.execute_script(script=js)
@@ -106,12 +113,12 @@ class Video(object):
             # 使视频一直处于播放状态
             if play_status.get_attribute(
                     name='class') != self.__playing_class_name:
-                if start == self.__video_time or start == end:
+                if start == timeout or start == end:
                     break
                 else:
                     self.__play(task_driver=task_driver)
             # 避免视频总时间不够预设时间
-            if start == self.__video_time or start == end:
+            if start == timeout or start == end:
                 break
             time.sleep(1)
         self.__success = True
