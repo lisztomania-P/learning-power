@@ -8,7 +8,7 @@
 
 # 使用说明
 
-> **注：**Chrome版本
+> **Chrome版本**
 >
 > ![image-20201207091125954](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201207091125954.png)
 >
