@@ -44,13 +44,25 @@
 
 ## 使用示例
 
-> ![image-20201202145758927](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201202145758927.png)
+> ![image-20201209114329468](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201209114329468.png)
 >
-> ![image-20201207112136800](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201207112136800.png)
+> ![image-20201209114345699](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201209114345699.png)
 >
-> ![image-20201207112153467](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201207112153467.png)
+> ![image-20201209114406721](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201209114406721.png)
 >
-> ![img](https://gitee.com/lisztomania/Figure-bed/raw/master/img/K0S%604GRX7LLI%5D11O0V26I32.png)
+> ![image-20201209114457238](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201209114457238.png)
+>
+> ![image-20201209114712975](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201209114712975.png)
+>
+> ![image-20201209115305018](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201209115305018.png)
+>
+> ![image-20201209121854379](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201209121854379.png)
+>
+> ![image-20201209121940399](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201209121940399.png)
+>
+> ![image-20201209123111315](https://gitee.com/lisztomania/Figure-bed/raw/master/img/image-20201209123111315.png)
+
+
 
 ## 版本说明
 
