@@ -168,6 +168,7 @@ class Answer(object):
         if self.__type in [1, 2]:
             for correct in answer['correct']:
                 self.__answer_choosables[correct['value']].click()
+                time.sleep(0.1)
         elif self.__type == 3:
             descs = re.findall(
                 pattern=r"<font color=\"red\">.*?</font>",
@@ -179,6 +180,7 @@ class Answer(object):
                 for desc in descs:
                     if correct['content'] == desc:
                         self.__answer_choosables[correct['label']].click()
+                        time.sleep(0.1)
 
     def __do_input(self, answer: Dict):
         self.__init_input()
