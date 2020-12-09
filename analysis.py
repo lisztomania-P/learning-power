@@ -303,7 +303,15 @@ class Analysis_Project_Answer(object):
 
     def __init__(self, task_driver: WebDriver):
         self.__driver = task_driver
-        self.__init_topic()
+        self.__except_topic()
+
+    def __except_topic(self):
+        while True:
+            try:
+                self.__init_topic()
+                break
+            except KeyError:
+                continue
 
     def __init_topic(self):
         end = get_random.get_random_int(4, 5)
@@ -325,7 +333,6 @@ class Analysis_Project_Answer(object):
                 break
 
     def get_topic(self) -> int:
-        print(self.__topic_list)
         temp: Dict = self.__topic_list.pop()
         user_msg.USER_PROJECT_ANSWER_TASKS = temp['questionNum']
         return temp['id']
