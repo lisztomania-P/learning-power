@@ -14,7 +14,11 @@ from configuration import DRIVER_FILE_PATH, DB_TEMP_DIR, DRIVER_OPTIONS
 
 
 def __set_driver():
-    os.system('cls')
+    if(os.name == 'posix'):
+        os.system('clear')
+    else:
+        os.system('cls')
+
     auto = input("执行视频是否静音(Y/n):")
     display = input("是否显示自动化过程(y/N):")
     print("稍等一会儿，正在连接服务器！")

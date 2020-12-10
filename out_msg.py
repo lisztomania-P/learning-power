@@ -144,7 +144,11 @@ def out_project_answer_bar():
 # 输出装饰器
 def out_print(func):
     def wrapper(*args, **kwargs):
-        os.system('cls')
+        if(os.name == 'posix'):
+            os.system('clear')
+        else:
+            os.system('cls')
+        
         try:
             out_user_msg()
             out_tasks_numbers()
