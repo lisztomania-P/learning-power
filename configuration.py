@@ -20,8 +20,12 @@ DB_TEMP_DIR: str = os.path.join(DB_DIR, 'temp')
 # 驱动目录
 DRIVER_DIR: str = os.path.join(BASE_DIR, 'driver')
 
-# 驱动文件路径
-DRIVER_FILE_PATH: str = os.path.join(DRIVER_DIR, 'chromedriver.exe')
+# 驱动文件路径 unix / nt
+if (os.name == 'posix'):
+    DRIVER_FILE_PATH: str = os.path.join(DRIVER_DIR, 'chromedriver')
+else:
+    DRIVER_FILE_PATH: str = os.path.join(DRIVER_DIR, 'chromedriver.exe')
+    
 # 过滤文件路径
 DB_PARENT_SON_FILE_PATH: str = os.path.join(DB_DIR, 'task_parent_son')
 
