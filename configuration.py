@@ -21,7 +21,7 @@ DB_TEMP_DIR: str = os.path.join(DB_DIR, 'temp')
 DRIVER_DIR: str = os.path.join(BASE_DIR, 'driver')
 
 # 驱动文件路径 unix / nt
-if (os.name == 'posix'):
+if os.name == 'posix':
     DRIVER_FILE_PATH: str = os.path.join(DRIVER_DIR, 'chromedriver')
 else:
     DRIVER_FILE_PATH: str = os.path.join(DRIVER_DIR, 'chromedriver.exe')

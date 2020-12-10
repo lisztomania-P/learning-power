@@ -123,6 +123,7 @@ def out_weekly_answer_bar():
         msg += time_msg
     print(msg)
 
+
 # 输出专项答题任务进度
 def out_project_answer_bar():
     msg = '''专项答题任务:{play}/{max_task}\n'''
@@ -141,14 +142,15 @@ def out_project_answer_bar():
         msg += time_msg
     print(msg)
 
+
 # 输出装饰器
 def out_print(func):
     def wrapper(*args, **kwargs):
-        if(os.name == 'posix'):
+        if os.name == 'posix':
             os.system('clear')
         else:
             os.system('cls')
-        
+
         try:
             out_user_msg()
             out_tasks_numbers()

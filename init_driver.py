@@ -14,7 +14,7 @@ from configuration import DRIVER_FILE_PATH, DB_TEMP_DIR, DRIVER_OPTIONS
 
 
 def __set_driver():
-    if(os.name == 'posix'):
+    if os.name == 'posix':
         os.system('clear')
     else:
         os.system('cls')

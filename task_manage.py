@@ -82,15 +82,6 @@ class Task_Manage(object):
             self.__user_tasks_number[self.__task_id[2]],
             self.__user_tasks_number[self.__task_id[1003]]
         )
-        user_msg.USER_DAILY_ANSWER_TASKS = self.__user_tasks_number[
-            self.__task_id[6]
-        ]
-        user_msg.USER_WEEKLY_ANSWER_TASKS = self.__user_tasks_number[
-            self.__task_id[5]
-        ]
-        user_msg.USER_PROJECT_ANSWER_TASKS = self.__user_tasks_number[
-            self.__task_id[4]
-        ]
 
     # 创建积分获取窗口
     def __create_score_window(self):
