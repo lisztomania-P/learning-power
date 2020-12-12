@@ -16,7 +16,7 @@
 >
 > 驱动下载链接：http://chromedriver.storage.googleapis.com/index.html
 >
-> 首次使用会生成历史记录文件task_parent_son，尽量保存，下次使用时，可重复使用，用来避免重复任务。
+> 首次使用会生成数据库文件task.db，用于提高文章、视频任务效率。
 
 ## 依赖安装
 
