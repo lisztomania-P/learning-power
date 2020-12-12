@@ -9,15 +9,23 @@
 import base64
 import json
 import os
-import pickle
 import glob
 from typing import Dict, List
+
+import db_manage
 import get_random
 import user_msg
-from configuration import MSG_APIS, TASK_APIS, DB_PARENT_SON_FILE_PATH, \
-    TASK_ID, DB_TEMP_DIR, WEEKLY_ANSWER_TOPICS_API, PROJECT_ANSWER_TOPICS_API
+from article import Article
+from configuration import MSG_APIS, TASK_APIS, \
+    TASK_ID, WEEKLY_ANSWER_TOPICS_API, PROJECT_ANSWER_TOPICS_API, \
+    DB_TEMP_DIR_JSON
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.by import By
+
+from video import Video
 
 true = True
 false = False
@@ -30,44 +38,36 @@ def analysis_json(tags: WebElement) -> Dict:
     return result
 
 
-# 清理垃圾
-def clear_files(func):
-    def wrapper(*args, **kwargs):
-        files = os.path.join(DB_TEMP_DIR, "*")
-        for file in glob.glob(files):
-            os.remove(path=file)
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
 # 解析用户信息
 class Analysis_Msg(object):
-    # 用户信息API
-    apis: Dict = MSG_APIS
-    # 任务ID
-    task_id: Dict = TASK_ID
     # 积分窗口
-    __score_driver: WebDriver = None
+    __score_driver: WebDriver
     # 累计积分
-    __aggregate_score: Dict = None
+    __aggregate_score: Dict
     # 每日积分
-    __daily_score: Dict = None
+    __daily_score: Dict
     # 任务进度
-    __task_bar: Dict = None
+    __task_bar: Dict
     # 等级
-    __level: Dict = None
+    __level: Dict
+
+    __wait: WebDriverWait
 
     def __init__(self, score_driver: WebDriver):
         self.__score_driver = score_driver
+        self.__wait = WebDriverWait(self.__score_driver, 10)
         self.__messages()
 
     # 抓取信息
     def __messages(self):
-        for key, value in self.apis.items():
+        for key, value in MSG_APIS.items():
             self.__score_driver.get(value)
-            temp_tags = self.__score_driver.find_element_by_tag_name(
-                name='pre')
+            msg_Ec = EC.presence_of_element_located(
+                (
+                    By.TAG_NAME, 'pre'
+                )
+            )
+            temp_tags = self.__wait.until(msg_Ec)
             msg = analysis_json(tags=temp_tags)
             if key == 'aggregate_score_api':
                 self.__aggregate_score = msg
@@ -79,12 +79,13 @@ class Analysis_Msg(object):
                 self.__level = msg
 
     # 获取用户ID
-    def get_uid(self) -> int:
-        uid: int = self.__aggregate_score['data']['userId']
-        return uid
+    @property
+    def uid(self) -> int:
+        return self.__aggregate_score['data']['userId']
 
     # 获取累计积分
-    def get_aggregate_score(self) -> Dict:
+    @property
+    def aggregate_score(self) -> Dict:
         name = self.__aggregate_score['data']['scoreTypeName']
         aggregate_score: Dict = {
             'name': name if name else '总积分',
@@ -93,7 +94,8 @@ class Analysis_Msg(object):
         return aggregate_score
 
     # 获取每日积分
-    def get_daily_score(self) -> Dict:
+    @property
+    def daily_score(self) -> Dict:
         name = self.__daily_score['data']['scoreTypeName']
         daily_score: Dict = {
             'name': name if name else '日积分',
@@ -102,14 +104,16 @@ class Analysis_Msg(object):
         return daily_score
 
     # 获取任务进度
-    def get_task_bar(self) -> Dict:
+    @property
+    def task_bar(self) -> Dict:
         task_bar: Dict = dict()
         for task in self.__task_bar['data']['dayScoreDtos']:
-            task_bar[self.task_id[task['ruleId']]] = task
+            task_bar[TASK_ID[task['ruleId']]] = task
         return task_bar
 
     # 获取等级信息
-    def get_level(self) -> Dict:
+    @property
+    def level(self) -> Dict:
         level: Dict = {
             'name': self.__level['data']['levelName'],
             'level': self.__level['data']['level']
@@ -119,143 +123,126 @@ class Analysis_Msg(object):
 
 # 任务分发器
 class Analysis_Task(object):
-    # 任务API
-    apis: Dict = TASK_APIS
     # 任务窗口
-    __task_driver: WebDriver = None
+    __task_driver: WebDriver
     # 任务大纲
-    __task_parent: Dict = None
+    __task_parent: Dict
     # 任务细则
-    __task_son: List = None
-    # 任务分类
-    __task_type: Dict = {
-        'article': [],
-        'video': [],
-        'other': []
-    }
+    __task_son: str
 
-    # 过滤器
-    __task_parent_son: Dict = dict()
-    # 过滤文件路径
-    __task_parent_son_path: str = DB_PARENT_SON_FILE_PATH
+    # 数据库
+    __db: db_manage = db_manage
+
+    __wait: WebDriverWait
 
     # 初始化，直至任务装填完毕
     def __init__(self, task_driver: WebDriver):
         self.__task_driver = task_driver
-        self.__check_parent_son()
-        self.__set_task_parent()
-        self.__check_type()
+        self.__wait = WebDriverWait(self.__task_driver, 10)
+        self.__db.connect_db()
+
+    def __check_article_db(self, limit: int):
+        while not self.__db.exist_unseen_article(limit=limit):
+            self.__check_task_parent()
+            self.__set_task_son()
+            self.__set_task_type()
+            self.__check_file()
+
+    def __check_video_db(self, limit: int):
+        while not self.__db.exist_unseen_video(limit=limit):
+            self.__check_task_parent()
+            self.__set_task_son()
+            self.__set_task_type()
+            self.__check_file()
+
+    def __insert_db_article(self, task: Dict):
+        article = Article(
+            itemId=task['itemId'],
+            url=task['url'],
+            see=False
+        )
+        self.__db.exist_insert_article(article=article)
+
+    def __insert_db_video(self, task: Dict):
+        video = Video(
+            itemId=task['itemId'],
+            url=task['url'],
+            see=False
+        )
+        self.__db.exist_insert_video(video=video)
+
+    # 检查任务大纲
+    def __check_task_parent(self):
+        try:
+            if self.__task_parent:
+                pass
+        except AttributeError:
+            self.__set_task_parent()
 
     # 获取任务大纲
-    @clear_files
     def __set_task_parent(self):
-        self.__task_driver.get(url=self.apis['task_parent_api'])
-        result = self.__task_driver.find_element_by_tag_name(name='pre')
+        self.__task_driver.get(url=TASK_APIS['task_parent_api'])
+        res_Ec = EC.presence_of_element_located(
+            (
+                By.TAG_NAME, 'pre'
+            )
+        )
+        result = self.__wait.until(res_Ec)
         self.__task_parent = analysis_json(tags=result)
 
     # 获取任务细则
-    @clear_files
     def __set_task_son(self):
         pop = None
         for key in self.__task_parent:
             self.__task_driver.get(
-                url=self.apis['task_son_api'].format(key))
+                url=TASK_APIS['task_son_api'].format(key))
             if self.__task_driver.current_url == \
-                    self.apis['task_no_found_api']:
+                    TASK_APIS['task_no_found_api']:
                 continue
             temp_son = self.__task_driver.find_element_by_tag_name(
                 name='pre').text
-            self.__task_son = [key, temp_son]
+            self.__task_son = temp_son
             if self.__task_son:
                 pop = key
                 break
         self.__task_parent.pop(pop)
-        if pop not in self.__task_parent_son:
-            self.__task_parent_son[pop] = []
-            self.__update_parent_son()
 
     # 分类任务
     def __set_task_type(self):
-        tasks = self.__task_son[1]
+        tasks = self.__task_son
         result = eval(tasks)
         for task in result:
-            if task['itemId'] in self.__task_parent_son[self.__task_son[0]]:
-                continue
-            elif task['type'] == 'tuwen':
-                self.__task_type['article'].append((self.__task_son[0], task))
+            if task['type'] == 'tuwen':
+                self.__insert_db_article(task=task)
             elif task['type'] == 'shipin':
-                self.__task_type['video'].append((self.__task_son[0], task))
-            else:
-                self.__task_type['other'].append((self.__task_son[0], task))
-        self.__task_son.clear()
+                self.__insert_db_video(task=task)
+        self.__task_son = ''
 
-    # 检查装填
-    def __check_type(self):
-        while True:
-            if self.__task_type['article'] and self.__task_type['video']:
-                break
-            self.__set_task_son()
+    def __check_file(self):
+        for path in glob.glob(DB_TEMP_DIR_JSON):
+            with open(path, 'r', encoding='utf-8') as f:
+                self.__task_son = f.read()
+                f.close()
             self.__set_task_type()
+            os.remove(path)
 
-    # 初始化检查过滤器
-    def __check_parent_son(self):
-        if glob.glob(pathname=self.__task_parent_son_path):
-            self.__load_parent_son()
-        else:
-            self.__update_parent_son()
+    # 抽取文章任务
+    def get_article_tasks(self, task_number: int = 6) -> List[Article]:
+        self.__check_article_db(limit=task_number)
+        return self.__db.get_article(limit=task_number)
 
-    # 更新过滤器(内部)
-    def __update_parent_son(self):
-        with open(self.__task_parent_son_path, 'wb') as f:
-            pickle.dump(obj=self.__task_parent_son, file=f)
-            f.close()
+    # 抽取视频任务
+    def get_video_tasks(self, task_number: int = 6) -> List[Video]:
+        self.__check_video_db(limit=task_number)
+        return self.__db.get_video(limit=task_number)
 
-    # 加载过滤器
-    def __load_parent_son(self):
-        with open(self.__task_parent_son_path, 'rb') as f:
-            self.__task_parent_son = pickle.load(file=f)
-            f.close()
+    # 更新文章已读
+    def update_article_see(self, article: Article):
+        self.__db.update_article_see(article=article)
 
-    # 更新过滤器(外部)
-    def update_parend_son(self, task: List):
-        self.__task_parent_son[task[0]].append(task[1]['itemId'])
-        self.__update_parent_son()
-        self.__load_parent_son()
-
-    # 随机抽取文章任务
-    def get_article_tasks(self, task_number: int = 6) -> List:
-        if len(self.__task_type['article']) < task_number:
-            self.__refresh_tasks(key='article')
-        tasks: List = []
-        articles_len: int = len(self.__task_type['article'])
-        while len(tasks) != task_number:
-            index = get_random.get_random_int(a=0, b=articles_len - 1)
-            temp = self.__task_type['article'][index]
-            if temp not in tasks:
-                tasks.append(temp)
-        for task in tasks:
-            self.__task_type['article'].remove(task)
-        return tasks
-
-    # 随机抽取视频任务
-    def get_video_tasks(self, task_number: int = 6) -> List:
-        if len(self.__task_type['video']) < task_number:
-            self.__refresh_tasks(key='video')
-        tasks: List = []
-        videos_len: int = len(self.__task_type['video'])
-        while len(tasks) != task_number:
-            index = get_random.get_random_int(a=0, b=videos_len - 1)
-            temp = self.__task_type['video'][index]
-            if temp not in tasks:
-                tasks.append(temp)
-        for task in tasks:
-            self.__task_type['video'].remove(task)
-        return tasks
-
-    # 刷新任务池
-    def __refresh_tasks(self, key):
-        self.__task_type[key].clear()
-        self.__check_type()
+    # 更新视频已读
+    def update_video_see(self, video: Video):
+        self.__db.update_video_see(video=video)
 
 
 # 每周答题任务提取
@@ -299,10 +286,12 @@ class Analysis_Weekly_Answer(object):
 class Analysis_Project_Answer(object):
     __topic_api: str = PROJECT_ANSWER_TOPICS_API
     __topic_list: List[Dict] = []
-    __driver: WebDriver = None
+    __driver: WebDriver
+    __wait: WebDriverWait
 
     def __init__(self, task_driver: WebDriver):
         self.__driver = task_driver
+        self.__wait = WebDriverWait(self.__driver, 10)
         self.__except_topic()
 
     def __except_topic(self):
@@ -318,8 +307,12 @@ class Analysis_Project_Answer(object):
         for start in range(end, 0, -1):
             url = self.__topic_api.format(page=start)
             self.__driver.get(url=url)
-            code: WebElement = self.__driver.find_element_by_tag_name(
-                name='pre')
+            code_Ec = EC.presence_of_element_located(
+                (
+                    By.TAG_NAME, 'pre'
+                )
+            )
+            code: WebElement = self.__wait.until(code_Ec)
             code: Dict = analysis_json(tags=code)
             code['data_str'] = json.loads(
                 base64.b64decode(code['data_str']).decode('utf-8')
