@@ -10,32 +10,26 @@ import get_random
 import user_msg
 from typing import Dict, List
 from selenium.webdriver.chrome.webdriver import WebDriver
-from analysis import Analysis_Msg, Analysis_Task, clear_files, \
+from analysis import Analysis_Msg, Analysis_Task, \
     Analysis_Weekly_Answer, Analysis_Project_Answer
 from configuration import TASK_ID, USER_KEYS, TASK_OPTIONS, VIDEO_TIME, \
     VIDEO_ACC_TIME, ARTICLE_ACC_TIME, DAILY_ANSWER_ACC_TIME, ARTICLE_TIME, \
     WEEKLY_ANSWER_ACC_TIME, PROJECT_ANSWER_ACC_TIME
 from answer import Answer
 from daily_article import Daily_Article
-from video import Video
+from see_video import See_Video
 
 
 class Task_Manage(object):
-    # 任务总状态
-    __accomplish: bool = False
-    # 任务ID
-    __task_id: Dict = TASK_ID
     # 窗口管理
     __windows: Dict = dict()
     # 用户信息
     __user_msg: Dict = dict()
-    # 用户信息键
-    __user_keys: Dict = USER_KEYS
     # 待完成任务数
     __user_tasks_number: Dict = dict()
 
     # 文章视频任务解析分发器
-    __analysis_task: Analysis_Task = None
+    __analysis_task: Analysis_Task
     # 每周答题任务解析分发器
     __weekly_task: Analysis_Weekly_Answer = None
     # 专项答题任务解析分发器
@@ -52,35 +46,35 @@ class Task_Manage(object):
         self.__windows['score'] = self.__driver.current_window_handle
         self.__refresh_user_msg()
         self.__init_user_tasks()
+        self.__init_article_video_tasks()
 
     # 刷新用户信息
     def __refresh_user_msg(self):
         self.__change_window_score()
         analysis_msg = Analysis_Msg(score_driver=self.__driver)
-        self.__user_msg[self.__user_keys[1]] = analysis_msg.get_uid()
-        self.__user_msg[
-            self.__user_keys[2]] = analysis_msg.get_aggregate_score()
-        self.__user_msg[self.__user_keys[3]] = analysis_msg.get_daily_score()
-        self.__user_msg[self.__user_keys[4]] = analysis_msg.get_task_bar()
-        self.__user_msg[self.__user_keys[5]] = analysis_msg.get_level()
+        self.__user_msg[USER_KEYS[1]] = analysis_msg.uid
+        self.__user_msg[USER_KEYS[2]] = analysis_msg.aggregate_score
+        self.__user_msg[USER_KEYS[3]] = analysis_msg.daily_score
+        self.__user_msg[USER_KEYS[4]] = analysis_msg.task_bar
+        self.__user_msg[USER_KEYS[5]] = analysis_msg.level
         user_msg.USER_MSG = self.__user_msg
 
     # 初始化任务数
     def __init_user_tasks(self):
         self.__refresh_user_msg()
-        task_bar = self.__user_msg[self.__user_keys[4]]
-        for task_id, task_name in self.__task_id.items():
-            task: Dict = task_bar[self.__task_id[task_id]]
+        task_bar = self.__user_msg[USER_KEYS[4]]
+        for task_id, task_name in TASK_ID.items():
+            task: Dict = task_bar[TASK_ID[task_id]]
             task_number = task['dayMaxScore'] - task['currentScore']
-            self.__user_tasks_number[self.__task_id[task_id]] = task_number
+            self.__user_tasks_number[TASK_ID[task_id]] = task_number
         user_msg.USER_TASKS_NUMBER = self.__user_tasks_number
         user_msg.USER_ARTICLE_TASKS = max(
-            self.__user_tasks_number[self.__task_id[1]],
-            self.__user_tasks_number[self.__task_id[1002]]
+            self.__user_tasks_number[TASK_ID[1]],
+            self.__user_tasks_number[TASK_ID[1002]]
         )
         user_msg.USER_VIDEO_TASKS = max(
-            self.__user_tasks_number[self.__task_id[2]],
-            self.__user_tasks_number[self.__task_id[1003]]
+            self.__user_tasks_number[TASK_ID[2]],
+            self.__user_tasks_number[TASK_ID[1003]]
         )
 
     # 创建积分获取窗口
@@ -135,12 +129,14 @@ class Task_Manage(object):
     # 初始化专项答题任务分发器
     def __init_project_answer_tasks(self):
         self.__change_window_task()
-        self.__project_task = Analysis_Project_Answer(task_driver=self.__driver)
+        self.__project_task = Analysis_Project_Answer(
+            task_driver=self.__driver
+        )
 
     # 注入任务池(文章)
     def __load_article_tasks(self):
-        number = max(self.__user_tasks_number[self.__task_id[1]],
-                     self.__user_tasks_number[self.__task_id[1002]])
+        number = max(self.__user_tasks_number[TASK_ID[1]],
+                     self.__user_tasks_number[TASK_ID[1002]])
         self.__tasks['article'] = self.__analysis_task.get_article_tasks(
             task_number=number)
 
@@ -151,8 +147,8 @@ class Task_Manage(object):
 
     # 注入任务池(视频)
     def __load_video_tasks(self):
-        number = max(self.__user_tasks_number[self.__task_id[2]],
-                     self.__user_tasks_number[self.__task_id[1003]])
+        number = max(self.__user_tasks_number[TASK_ID[2]],
+                     self.__user_tasks_number[TASK_ID[1003]])
         self.__tasks['video'] = self.__analysis_task.get_video_tasks(
             task_number=number)
 
@@ -164,11 +160,11 @@ class Task_Manage(object):
     # 执行任务(文章)
     def __do_article_task(self):
         self.__change_window_task()
-        for task in self.__tasks['article']:
+        for article_task in self.__tasks['article']:
             user_msg.USER_ARTICLE_PLAYING = \
-                self.__tasks['article'].index(task) + 1
+                self.__tasks['article'].index(article_task) + 1
             daily_article = Daily_Article()
-            task_url = task[1]['url']
+            task_url = article_task.url
             task_time = get_random.get_random_int(
                 a=ARTICLE_TIME[0],
                 b=ARTICLE_TIME[1]
@@ -179,7 +175,7 @@ class Task_Manage(object):
                 task_url=task_url,
                 timeout=task_time
             )
-            self.__analysis_task.update_parend_son(task=task)
+            self.__analysis_task.update_article_see(article=article_task)
             self.__init_user_tasks()
             self.__change_window_task()
         self.__tasks['article'].clear()
@@ -187,8 +183,8 @@ class Task_Manage(object):
     # 检查任务1、1002任务是否完成
     def __check_article_bar(self) -> bool:
         self.__init_user_tasks()
-        if self.__user_tasks_number[self.__task_id[1]] or \
-                self.__user_tasks_number[self.__task_id[1002]]:
+        if self.__user_tasks_number[TASK_ID[1]] or \
+                self.__user_tasks_number[TASK_ID[1002]]:
             return False
         else:
             return True
@@ -196,10 +192,11 @@ class Task_Manage(object):
     # 执行任务(视频)
     def __do_video_task(self):
         self.__change_window_task()
-        for task in self.__tasks['video']:
-            user_msg.USER_VIDEO_PLAYING = self.__tasks['video'].index(task) + 1
-            video = Video()
-            task_url = task[1]['url']
+        for video_task in self.__tasks['video']:
+            user_msg.USER_VIDEO_PLAYING = self.__tasks['video'].index(
+                video_task) + 1
+            video = See_Video()
+            task_url = video_task.url
             sec = get_random.get_random_int(a=0, b=9)
             video_time = VIDEO_TIME.format(sec)
             user_msg.USER_VIDEO_TIME = video_time
@@ -208,7 +205,7 @@ class Task_Manage(object):
                 task_url=task_url,
                 timeout=video_time
             )
-            self.__analysis_task.update_parend_son(task=task)
+            self.__analysis_task.update_video_see(video=video_task)
             self.__init_user_tasks()
             self.__change_window_task()
         self.__tasks['video'].clear()
@@ -216,8 +213,8 @@ class Task_Manage(object):
     # 检查任务2、1003是否完成
     def __check_video_bar(self) -> bool:
         self.__init_user_tasks()
-        if self.__user_tasks_number[self.__task_id[2]] or \
-                self.__user_tasks_number[self.__task_id[1003]]:
+        if self.__user_tasks_number[TASK_ID[2]] or \
+                self.__user_tasks_number[TASK_ID[1003]]:
             return False
         else:
             return True
@@ -233,7 +230,7 @@ class Task_Manage(object):
     # 检查任务6是否完成
     def __check_daily_answer_bar(self) -> bool:
         self.__init_user_tasks()
-        if self.__user_tasks_number[self.__task_id[6]]:
+        if self.__user_tasks_number[TASK_ID[6]]:
             return False
         else:
             return True
@@ -250,7 +247,7 @@ class Task_Manage(object):
     # 检查任务5是否完成
     def __check_weekly_answer_bar(self) -> bool:
         self.__init_user_tasks()
-        if self.__user_tasks_number[self.__task_id[5]]:
+        if self.__user_tasks_number[TASK_ID[5]]:
             return False
         else:
             return True
@@ -267,7 +264,7 @@ class Task_Manage(object):
     # 检测任务4是否完成
     def __check_project_answer_bar(self) -> bool:
         self.__init_user_tasks()
-        if self.__user_tasks_number[self.__task_id[4]]:
+        if self.__user_tasks_number[TASK_ID[4]]:
             return False
         else:
             return True
@@ -275,16 +272,12 @@ class Task_Manage(object):
     # 完成文章任务
     def __accomplish_article(self):
         while not self.__check_article_bar():
-            if not self.__analysis_task:
-                self.__init_article_video_tasks()
             self.__check_article_tasks()
             self.__do_article_task()
 
     # 完成视频任务
     def __accomplish_video(self):
         while not self.__check_video_bar():
-            if not self.__analysis_task:
-                self.__init_article_video_tasks()
             self.__check_video_tasks()
             self.__do_video_task()
 
@@ -307,7 +300,6 @@ class Task_Manage(object):
                 self.__init_project_answer_tasks()
             self.__do_project_answer_task()
 
-    @clear_files
     def start(self):
         if TASK_OPTIONS[1][1]:
             self.__accomplish_article()
@@ -324,7 +316,6 @@ class Task_Manage(object):
         if TASK_OPTIONS[5][1]:
             self.__accomplish_project_answer()
             user_msg.USER_PROJECT_ANSWER_TIME_SLEEP = PROJECT_ANSWER_ACC_TIME
-        self.__driver.quit()
 
     def get_tasks(self) -> Dict:
         return self.__tasks
