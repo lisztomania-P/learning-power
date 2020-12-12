@@ -142,18 +142,24 @@ class Analysis_Task(object):
         self.__db.connect_db()
 
     def __check_article_db(self, limit: int):
+        temp = 1
         while not self.__db.exist_unseen_article(limit=limit):
+            print("文章任务不足，正在获取中:"+str(temp))
             self.__check_task_parent()
             self.__set_task_son()
             self.__set_task_type()
             self.__check_file()
+            temp += 1
 
     def __check_video_db(self, limit: int):
+        temp = 1
         while not self.__db.exist_unseen_video(limit=limit):
+            print("视频任务不足，正在获取中:"+str(temp))
             self.__check_task_parent()
             self.__set_task_son()
             self.__set_task_type()
             self.__check_file()
+            temp += 1
 
     def __insert_db_article(self, task: Dict):
         article = Article(
