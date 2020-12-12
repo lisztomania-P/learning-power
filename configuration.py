@@ -17,8 +17,12 @@ BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
 DB_DIR: str = os.path.join(BASE_DIR, 'db')
 # 临时数据目录
 DB_TEMP_DIR: str = os.path.join(DB_DIR, 'temp')
+# 临时JSON文件匹配
+DB_TEMP_DIR_JSON: str = os.path.join(DB_TEMP_DIR, '*.json')
 # 驱动目录
 DRIVER_DIR: str = os.path.join(BASE_DIR, 'driver')
+# 数据库文件
+DB_FILE_DIR: str = os.path.join(DB_DIR, 'tasks.db')
 
 # 驱动文件路径 unix / nt
 if os.name == 'posix':
