@@ -12,20 +12,21 @@ import os
 import glob
 from typing import Dict, List
 
-import db_manage
-import get_random
-import user_msg
-from article import Article
-from configuration import MSG_APIS, TASK_APIS, \
-    TASK_ID, WEEKLY_ANSWER_TOPICS_API, PROJECT_ANSWER_TOPICS_API, \
-    DB_TEMP_DIR_JSON
+from db import db_manage
+from tools import get_random
+from config import user_msg
+from task_class.article import Article
+from config.api_config import MSG_APIS, TASK_APIS, WEEKLY_ANSWER_TOPICS_API, \
+    PROJECT_ANSWER_TOPICS_API, NOT_FOUND_API
+from config.task_config import TASK_ID
+from config.path_config import DB_TEMP_DIR_JSON
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 
-from video import Video
+from task_class.video import Video
 
 true = True
 false = False
@@ -203,7 +204,7 @@ class Analysis_Task(object):
             self.__task_driver.get(
                 url=TASK_APIS['task_son_api'].format(key))
             if self.__task_driver.current_url == \
-                    TASK_APIS['task_no_found_api']:
+                    NOT_FOUND_API:
                 continue
             temp_son = self.__task_driver.find_element_by_tag_name(
                 name='pre').text
