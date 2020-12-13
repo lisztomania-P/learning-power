@@ -7,10 +7,10 @@
 # @File     : main.py
 # @Function : 入口
 
-import init_driver
-from login import Login
-from select_task import Select_task
-from task_manage import Task_Manage
+from init import init_driver
+from login.login import Login
+from init.select_task import Select_task
+from task.task_manage import Task_Manage
 
 driver = init_driver.Driver()
 login = Login(driver=driver)
