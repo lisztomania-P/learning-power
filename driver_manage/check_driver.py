@@ -15,6 +15,7 @@ from config.path_config import DRIVER_FILE, DRIVER_FILES, DRIVER_DIR
 
 
 def check_driver() -> bool:
+    __check_driver_dir()
     temp = glob.glob(DRIVER_FILE)
     if not temp and not __unzip_files():
         chrome_version()
@@ -41,3 +42,8 @@ def __unzip_files() -> bool:
                 return False
     else:
         return False
+
+
+def __check_driver_dir() -> bool:
+    if not os.path.exists(DRIVER_DIR):
+        os.mkdir(DRIVER_DIR)
