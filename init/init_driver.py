@@ -32,7 +32,7 @@ def __set_driver():
         DRIVER_OPTIONS[2][1] = False
 
 
-def Driver() -> WebDriver:
+def driver() -> WebDriver:
     __set_driver()
     # 驱动配置
     caps = {

@@ -12,7 +12,7 @@ from login.login import Login
 from init.select_task import Select_task
 from task.task_manage import Task_Manage
 
-driver = init_driver.Driver()
+driver = init_driver.driver()
 login = Login(driver=driver)
 # 登录
 login.login()
