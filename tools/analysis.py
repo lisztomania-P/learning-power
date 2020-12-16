@@ -10,7 +10,10 @@ import base64
 import json
 import os
 import glob
+import requests
 from typing import Dict, List
+
+from requests import Response
 
 from db import db_manage
 from tools import get_random
@@ -124,22 +127,15 @@ class Analysis_Msg(object):
 
 # 任务分发器
 class Analysis_Task(object):
-    # 任务窗口
-    __task_driver: WebDriver
     # 任务大纲
     __task_parent: Dict
     # 任务细则
-    __task_son: str
-
+    __task_son: List[Dict]
     # 数据库
     __db: db_manage = db_manage
 
-    __wait: WebDriverWait
-
     # 初始化，直至任务装填完毕
-    def __init__(self, task_driver: WebDriver):
-        self.__task_driver = task_driver
-        self.__wait = WebDriverWait(self.__task_driver, 10)
+    def __init__(self):
         self.__db.connect_db()
 
     def __check_article_db(self, limit: int):
@@ -149,7 +145,6 @@ class Analysis_Task(object):
             self.__check_task_parent()
             self.__set_task_son()
             self.__set_task_type()
-            self.__check_file()
             temp += 1
 
     def __check_video_db(self, limit: int):
@@ -159,7 +154,6 @@ class Analysis_Task(object):
             self.__check_task_parent()
             self.__set_task_son()
             self.__set_task_type()
-            self.__check_file()
             temp += 1
 
     def __insert_db_article(self, task: Dict):
@@ -188,27 +182,19 @@ class Analysis_Task(object):
 
     # 获取任务大纲
     def __set_task_parent(self):
-        self.__task_driver.get(url=TASK_APIS['task_parent_api'])
-        res_Ec = EC.presence_of_element_located(
-            (
-                By.TAG_NAME, 'pre'
-            )
-        )
-        result = self.__wait.until(res_Ec)
-        self.__task_parent = analysis_json(tags=result)
+        task_parent: Response = requests.get(url=TASK_APIS['task_parent_api'])
+        task_parent.encoding = task_parent.apparent_encoding
+        self.__task_parent = json.loads(task_parent.text)
 
     # 获取任务细则
     def __set_task_son(self):
         pop = None
         for key in self.__task_parent:
-            self.__task_driver.get(
-                url=TASK_APIS['task_son_api'].format(key))
-            if self.__task_driver.current_url == \
-                    NOT_FOUND_API:
+            task_son: Response = requests.get(url=TASK_APIS['task_son_api'].format(key))
+            if task_son.url == NOT_FOUND_API:
                 continue
-            temp_son = self.__task_driver.find_element_by_tag_name(
-                name='pre').text
-            self.__task_son = temp_son
+            task_son.encoding = task_son.apparent_encoding
+            self.__task_son = eval(task_son.text)
             if self.__task_son:
                 pop = key
                 break
@@ -216,22 +202,12 @@ class Analysis_Task(object):
 
     # 分类任务
     def __set_task_type(self):
-        tasks = self.__task_son
-        result = eval(tasks)
-        for task in result:
+        for task in self.__task_son:
             if task['type'] == 'tuwen':
                 self.__insert_db_article(task=task)
             elif task['type'] == 'shipin':
                 self.__insert_db_video(task=task)
-        self.__task_son = ''
-
-    def __check_file(self):
-        for path in glob.glob(DB_TEMP_DIR_JSON):
-            with open(path, 'r', encoding='utf-8') as f:
-                self.__task_son = f.read()
-                f.close()
-            self.__set_task_type()
-            os.remove(path)
+        self.__task_son.clear()
 
     # 抽取文章任务
     def get_article_tasks(self, task_number: int = 6) -> List[Article]:
