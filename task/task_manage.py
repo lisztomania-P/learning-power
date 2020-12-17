@@ -119,7 +119,7 @@ class Task_Manage(object):
     # 初始化文章视频任务分发器
     def __init_article_video_tasks(self):
         self.__change_window_task()
-        self.__analysis_task = Analysis_Task(task_driver=self.__driver)
+        self.__analysis_task = Analysis_Task()
 
     # 初始化每周答题任务分发器
     def __init_weekly_answer_tasks(self):
