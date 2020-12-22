@@ -112,7 +112,10 @@ class Analysis_Msg(object):
     def task_bar(self) -> Dict:
         task_bar: Dict = dict()
         for task in self.__task_bar['data']['dayScoreDtos']:
-            task_bar[TASK_ID[task['ruleId']]] = task
+            try:
+                task_bar[TASK_ID[task['ruleId']]] = task
+            except KeyError:
+                continue
         return task_bar
 
     # 获取等级信息
