@@ -213,5 +213,7 @@ class MACOS(SYSTEM_ARGS):
 
         :return: str
         """
-        version = self.__os.popen(cmd='google-chrome --version').readline()
+        version = self.__os.popen(cmd=r'/Applications/Google\ '
+                                      r'Chrome.app/Contents/MacOS/Google\ '
+                                      r'Chrome --version').readline()
         return version.strip().split()[-1]
