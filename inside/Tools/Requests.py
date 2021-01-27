@@ -9,6 +9,7 @@
 from typing import Dict
 
 import requests
+import urllib3
 from requests import Response
 
 from inside.Config.User_Agent import USER_AGENT
@@ -23,6 +24,11 @@ class REQUESTS(metaclass=SINGLETON):
     __header = {
             'User-Agent': USER_AGENT().User_Agent
         }
+    __proxies = {
+        'http': 'http://127.0.0.1:8080',
+        'https': 'http://127.0.0.1:8080'
+    }
+    urllib3.disable_warnings()
 
     @classmethod
     def __Check_Headers(cls, **kwargs) -> Dict:
@@ -53,6 +59,8 @@ class REQUESTS(metaclass=SINGLETON):
         html = requests.get(
             url=url,
             headers=cls.__header,
+            proxies=cls.__proxies,
+            verify=False,
             params=params,
             **kwargs
         )
@@ -75,6 +83,8 @@ class REQUESTS(metaclass=SINGLETON):
         html = requests.post(
             url=url,
             headers=cls.__header,
+            proxies=cls.__proxies,
+            verify=False,
             data=data,
             json=json, **kwargs
         )
