@@ -1,0 +1,7 @@
+mitmproxy~=6.0.2
+tqdm~=4.56.0
+selenium~=3.141.0
+requests~=2.25.1
+ping3~=2.6.6
+beautifulsoup4~=4.9.3
+mitmproxy~=6.0.2
