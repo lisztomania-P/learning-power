@@ -11,7 +11,6 @@ import re
 from typing import Dict
 from urllib import parse
 
-import requests
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -140,18 +139,10 @@ class LOGIN(object):
             11021: 未登录
             11019: 二维码失效
         """
-        html = requests.post(
+        html = REQUESTS.Post(
             url=API().Login_QR_Status.geturl(),
             data=qr_data
         )
-        for retry in range(3):
-            if html.status_code == 200:
-                break
-            html = requests.post(
-                url=API().Login_QR_Status.geturl(),
-                data=qr_data
-            )
-        html.encoding = html.apparent_encoding
         status = html.json()
         if status['success']:
             self.__Change_Driver_Cookie(key=status['data'], state=qr_state)
@@ -171,10 +162,9 @@ class LOGIN(object):
         """
         url = parse.urlparse(url=key)
         code = parse.parse_qs(qs=url.query)['loginTmpCode'][0]
-        html = requests.get(
+        html = REQUESTS.Get(
             url=API().Login_Token.geturl().format(code=code, state=state)
         )
-        html.encoding = html.apparent_encoding
         token = html.cookies.get(name='token')
         cookie = {'domain': '.xuexi.cn',
                   'name': 'token',
@@ -291,29 +281,30 @@ class LOGIN(object):
                 self.__QR_Refresh()
                 continue
             else:
-                if self.__driver.current_url == API().Master.geturl():
-                    cookies = self.__driver.get_cookies()
-                    token = [{cookie['name']: cookie['value']} for cookie in
-                             cookies if cookie['name'] == 'token']
-                    if token:
-                        INFO_MANAGE().Init(token=token[0]['token'])
-                        if OPTIONS().Token:
-                            cookie = token[0]
-                            html = REQUESTS().Get(
-                                url=API().Aggregate_Score.geturl(),
-                                cookies=cookie
-                            )
-                            data = html.json()
-                            user_id = data['data']['userId']
-                            user = USER(user_id=user_id, token=token[0]['token'])
-                            if DB_MANAGE().User.Exist_User(user=user):
-                                DB_MANAGE().User.Update(user=user)
-                            else:
-                                DB_MANAGE().User.Insert(user=user)
-                                DB_MANAGE().Article.Update_All()
-                                DB_MANAGE().Video.Update_All()
-                    QR_VESSEL().QR_QUIT()
-                    return status
+                while self.__driver.current_url != API().Master.geturl():
+                    continue
+                cookies = self.__driver.get_cookies()
+                token = [{cookie['name']: cookie['value']} for cookie in
+                         cookies if cookie['name'] == 'token']
+                if token:
+                    INFO_MANAGE().Init(token=token[0]['token'])
+                    if OPTIONS().Token:
+                        cookie = token[0]
+                        html = REQUESTS().Get(
+                            url=API().Aggregate_Score.geturl(),
+                            cookies=cookie
+                        )
+                        data = html.json()
+                        user_id = data['data']['userId']
+                        user = USER(user_id=user_id, token=token[0]['token'])
+                        if DB_MANAGE().User.Exist_User(user=user):
+                            DB_MANAGE().User.Update(user=user)
+                        else:
+                            DB_MANAGE().User.Insert(user=user)
+                            DB_MANAGE().Article.Update_All()
+                            DB_MANAGE().Video.Update_All()
+                QR_VESSEL().QR_QUIT()
+                return status
 
     def Login(self) -> bool:
         """
