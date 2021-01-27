@@ -57,12 +57,14 @@ class TASK_INIT(metaclass=SINGLETON):
         :return: None
         """
         if DB_MANAGE().Task.Exist_Enough():
+            print("解析任务集中")
             task = DB_MANAGE().Task.Query()
             html = REQUESTS.Get(url=task.Link)
             DB_MANAGE().Task.Update(task=task)
             try:
                 for temp in html.json():
                     if temp['type'] == 'tuwen':
+                        print("解析为文章任务集")
                         article = ARTICLE(
                             item=temp['itemId'],
                             link=temp['url'],
@@ -70,13 +72,17 @@ class TASK_INIT(metaclass=SINGLETON):
                         )
                         DB_MANAGE().Article.Insert(article=article)
                     elif temp['type'] == 'shipin':
+                        print("解析为视频任务集")
                         video = VIDEO(
                             item=temp['itemId'],
                             link=temp['url'],
                             isread=False
                         )
                         DB_MANAGE().Video.Insert(video=video)
+                    else:
+                        print("解析为其他任务集")
             except JSONDecodeError:
+                print("解析为干扰项")
                 cls.Init_Article_Video()
 
     def Assigning_Article(self, num: int) -> List[ARTICLE]:
@@ -87,9 +93,11 @@ class TASK_INIT(metaclass=SINGLETON):
         :param num: 任务数
         :return: List[ARTICLE]
         """
+        print("正在分发文章任务")
         if DB_MANAGE().Article.Exist_Enough(limit=num):
             return DB_MANAGE().Article.Query(limit=num)
         else:
+            print("检测到文章任务数不足，自动获取任务集")
             self.Init_Article_Video()
             return self.Assigning_Article(num=num)
 
@@ -101,9 +109,11 @@ class TASK_INIT(metaclass=SINGLETON):
         :param num: 任务数
         :return: List[VIDEO]
         """
+        print("正在分发视频任务")
         if DB_MANAGE().Video.Exist_Enough(limit=num):
             return DB_MANAGE().Video.Query(limit=num)
         else:
+            print("检测到视频任务数不足，自动获取任务集")
             self.Init_Article_Video()
             return self.Assigning_Video(num=num)
 
