@@ -6,6 +6,8 @@
 # @Version  : Python 3.8.5
 # @File     : main.py
 # @Function : 入口
+import os
+
 from inside.Config.System import SYSTEM
 from inside.Driver.Driver_Manage import DRIVER_MANAGE
 from inside.Login.Login import LOGIN
@@ -17,6 +19,7 @@ from inside.Tools.Output import OUTPUT
 
 if __name__ == '__main__':
     SYSTEM().Check_Chrome()
+    os.system(command=SYSTEM().Clear)
     OPTIONS_MANAGE.Init_Options()
     MITMDUMP().Open()
     driver = DRIVER_MANAGE()
