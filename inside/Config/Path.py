@@ -93,7 +93,7 @@ class PATH(metaclass=SINGLETON):
 
         :return: str
         """
-        return os.path.join(
-            os.path.dirname(self.__Config_Path),
-            r'Task\Mitmdump\Intercept.py'
-        )
+        temp = os.path.join(os.path.dirname(self.__Config_Path), 'Task')
+        temp = os.path.join(temp, 'Mitmdump')
+        temp = os.path.join(temp, 'Intercept.py')
+        return temp
