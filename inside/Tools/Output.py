@@ -25,6 +25,7 @@ class OUTPUT(metaclass=SINGLETON):
         os.system(command=SYSTEM().Clear)
         temp = INFO_MANAGE()
         level = temp.Level_Info
+        print(f"项目地址:https://github.com/lisztomania-Zero/learning-power")
         print(f"用户ID:{temp.Id}\n"
               f"等级:{level[0]}\t段位:{level[1]}\t全国排名:{level[2]}\n"
               f"总积分:{temp.Aggregate_Score}\t今日积分:{temp.Daily_Score}\n"
