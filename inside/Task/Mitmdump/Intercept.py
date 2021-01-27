@@ -10,6 +10,7 @@ import re
 import base64
 import json
 from json import JSONDecodeError
+from random import randint
 from typing import Dict, List
 from abc import ABCMeta, abstractmethod
 
@@ -103,6 +104,7 @@ class DAILY(ABC_ANSWER):
         data = json.loads(data.decode('utf-8'))
         data['uniqueId'] = res['uniqueId']
         data['questions'].clear()
+        data['usedTime'] = randint(20, 50)
         for question in res['questions']:
             data['questions'].append(
                 {
@@ -166,6 +168,7 @@ class Weekly(ABC_ANSWER):
         data = json.loads(data.decode('utf-8'))
         data['uniqueId'] = res['uniqueId']
         data['questions'].clear()
+        data['usedTime'] = randint(20, 50)
         for question in res['questions']:
             data['questions'].append(
                 {
@@ -263,6 +266,7 @@ class Project(ABC_ANSWER):
         data = json.loads(data.decode('utf-8'))
         data['uniqueId'] = res['uniqueId']
         data['questions'].clear()
+        data['usedTime'] = randint(20, 50)
         for question in res['questions']:
             data['questions'].append(
                 {
