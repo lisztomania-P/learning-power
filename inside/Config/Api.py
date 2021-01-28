@@ -6,7 +6,6 @@
 # @Version  : Python 3.8.2
 # @File     : Api.py
 # @Function : api配置
-from ping3 import ping
 from typing import List
 from urllib.parse import ParseResult
 from urllib.parse import urlparse
@@ -17,6 +16,8 @@ from inside.Template.ABC_Driver_Analysis import DRIVER_ANALYSIS
 from inside.Template.Meta_Singleton import SINGLETON
 
 __all__ = ['API']
+
+from inside.Tools.Url_Test import URL_TEST
 
 
 class API(metaclass=SINGLETON):
@@ -361,7 +362,7 @@ class API(metaclass=SINGLETON):
         temp = float('inf')
         driver = None
         for value in self.__Drivers:
-            test = ping(dest_addr=value.Master.hostname, size=1)
+            test = URL_TEST.Url_Test(url=value.Master.geturl())
             if test and test < temp:
                 temp = test
                 driver = value
