@@ -133,11 +133,11 @@ class TASK_MANAGE(metaclass=SINGLETON):
         :return: None
         """
         while True:
-            if self.__answer_time[-1]:
-                if time.time() - self.__answer_time[0] <= 10:
-                    continue
             bar = INFO_MANAGE().Task_Bar
             if bar[6].Current_Score != bar[6].Day_Max_Score:
+                if self.__answer_time[-1]:
+                    if time.time() - self.__answer_time[0] <= 10:
+                        continue
                 temp = TASK_ANSWER(driver=self.__driver)
                 temp.Do(link=API().Daily_Answer.geturl())
                 OUTPUT.Info()
@@ -153,13 +153,16 @@ class TASK_MANAGE(metaclass=SINGLETON):
         :return: None
         """
         while True:
-            if self.__answer_time[-1]:
-                if time.time() - self.__answer_time[0] <= 10:
-                    continue
             bar = INFO_MANAGE().Task_Bar
             if bar[5].Current_Score != bar[5].Day_Max_Score:
+                if self.__answer_time[-1]:
+                    if time.time() - self.__answer_time[0] <= 10:
+                        continue
                 token = self.__driver.get_cookie(name='token')['value']
                 iid = TASK_INIT().Assigning_Weekly_Answer(token=token)
+                if not iid:
+                    print("没有每周答题任务了")
+                    break
                 temp = TASK_ANSWER(driver=self.__driver)
                 temp.Do(link=API().Weekly_Answer_Topic.geturl().format(num=iid))
                 OUTPUT.Info()
@@ -175,13 +178,16 @@ class TASK_MANAGE(metaclass=SINGLETON):
         :return: None
         """
         while True:
-            if self.__answer_time[-1]:
-                if time.time() - self.__answer_time[0] <= 10:
-                    continue
             bar = INFO_MANAGE().Task_Bar
             if bar[4].Current_Score != bar[4].Day_Max_Score:
+                if self.__answer_time[-1]:
+                    if time.time() - self.__answer_time[0] <= 10:
+                        continue
                 token = self.__driver.get_cookie(name='token')['value']
                 iid = TASK_INIT().Assigning_Project_Answer(token=token)
+                if not iid:
+                    print("没有专项答题任务了")
+                    break
                 temp = TASK_ANSWER(driver=self.__driver)
                 temp.Do(link=API().Project_Answer_Topic.geturl().format(num=iid))
                 OUTPUT.Info()
