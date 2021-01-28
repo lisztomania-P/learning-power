@@ -93,7 +93,10 @@ class PATH(metaclass=SINGLETON):
 
         :return: str
         """
+        xt = SYSTEM().System
         temp = os.path.join(os.path.dirname(self.__Config_Path), 'Task')
         temp = os.path.join(temp, 'Mitmdump')
         temp = os.path.join(temp, 'Intercept.py')
+        if xt == 'macOs':
+            temp = temp.replace(os.path.expanduser('~'))
         return temp
