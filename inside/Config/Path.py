@@ -98,5 +98,5 @@ class PATH(metaclass=SINGLETON):
         temp = os.path.join(temp, 'Mitmdump')
         temp = os.path.join(temp, 'Intercept.py')
         if xt == 'macOs':
-            temp = temp.replace(os.path.expanduser('~'))
+            temp = temp.replace(os.path.expanduser('~'), '~')
         return temp
