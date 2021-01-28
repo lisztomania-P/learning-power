@@ -81,6 +81,16 @@ class SYSTEM(SYSTEM_ARGS):
                 return MACOS()
 
     @property
+    def System(self) -> str:
+        """
+        System -> str
+        操作系统
+
+        :return: str
+        """
+        return self.__System_Args.System
+
+    @property
     def Clear(self) -> str:
         """
         Clear -> str

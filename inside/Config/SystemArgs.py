@@ -27,6 +27,16 @@ class WINDOWS(SYSTEM_ARGS):
             sub_key=r'Software\Google\Chrome\BLBeacon')
 
     @property
+    def System(self) -> str:
+        """
+        System -> str
+        操作系统
+
+        :return: str
+        """
+        return 'Windowns'
+
+    @property
     def Clear(self) -> str:
         """
         Clear -> str
@@ -96,6 +106,16 @@ class LINUX(SYSTEM_ARGS):
         self.__os = os
 
     @property
+    def System(self) -> str:
+        """
+        System -> str
+        操作系统
+
+        :return: str
+        """
+        return 'Linux'
+
+    @property
     def Clear(self) -> str:
         """
         Clear -> str
@@ -161,6 +181,16 @@ class MACOS(SYSTEM_ARGS):
         """
         import os
         self.__os = os
+
+    @property
+    def System(self) -> str:
+        """
+        System -> str
+        操作系统
+
+        :return: str
+        """
+        return 'macOs'
 
     @property
     def Clear(self) -> str:
