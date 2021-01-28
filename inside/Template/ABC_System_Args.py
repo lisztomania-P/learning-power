@@ -17,6 +17,15 @@ class ABC_SYSTEM_ARGS(metaclass=SINGLETON_ABC):
     """抽象系统类"""
 
     @abstractmethod
+    def System(self) -> str:
+        """
+        System() -> str
+        操作系统
+
+        :return: str
+        """
+
+    @abstractmethod
     def Clear(self) -> str:
         """
         Clear() -> str
@@ -69,6 +78,16 @@ class ABC_SYSTEM_ARGS(metaclass=SINGLETON_ABC):
 
 class SYSTEM_ARGS(ABC_SYSTEM_ARGS):
     """系统实际继承类，使每个方法都变为属性"""
+
+    @property
+    def System(self) -> str:
+        """
+        System() -> str
+        操作系统
+
+        :return: str
+        """
+        pass
 
     @property
     def Clear(self) -> str:
