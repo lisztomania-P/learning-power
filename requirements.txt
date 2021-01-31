@@ -5,3 +5,4 @@ requests~=2.25.1
 beautifulsoup4~=4.9.3
 mitmproxy~=6.0.2
 lxml~=4.6.2
+psutil~=5.8.0
