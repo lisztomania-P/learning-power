@@ -126,20 +126,17 @@ class TASK_INIT(metaclass=SINGLETON):
         :return: int
         """
         cookie = {'token': token}
-        html = REQUESTS.Get(
-            url=API().Weekly_Answer_Topics.geturl(),
-            cookies=cookie
-        )
-        data = html.json()
-        data = json.loads(base64.b64decode(data['data_str']).decode('utf-8'))
-        temp = None
-        for group in data['list']:
-            if group['month'] == '本月':
-                temp = group['practices'][::-1]
-                break
-        for topic in temp:
-            if not topic['seeSolution']:
-                return topic['id']
+        for num in range(3, 0, -1):
+            html = REQUESTS.Get(
+                url=API().Weekly_Answer_Topics.geturl().format(num=num),
+                cookies=cookie
+            )
+            data = html.json()
+            data = json.loads(base64.b64decode(data['data_str']).decode('utf-8'))
+            for group in data['list'][::-1]:
+                for practice in group['practices'][::-1]:
+                    if not practice['seeSolution']:
+                        return practice['id']
 
     def Assigning_Project_Answer(self, token: str) -> int:
         """
@@ -150,12 +147,13 @@ class TASK_INIT(metaclass=SINGLETON):
         :return: int
         """
         cookie = {'token': token}
-        html = REQUESTS.Get(
-            url=API().Project_Answer_Topics.geturl(),
-            cookies=cookie
-        )
-        data = html.json()
-        data = json.loads(base64.b64decode(data['data_str']).decode('utf-8'))
-        for topic in data['list'][::-1]:
-            if (not topic['overdue']) and (not topic['seeSolution']):
-                return topic['id']
+        for num in range(5, 0, -1):
+            html = REQUESTS.Get(
+                url=API().Project_Answer_Topics.geturl().format(num=num),
+                cookies=cookie
+            )
+            data = html.json()
+            data = json.loads(base64.b64decode(data['data_str']).decode('utf-8'))
+            for topic in data['list'][::-1]:
+                if (not topic['overdue']) and (not topic['seeSolution']):
+                    return topic['id']

@@ -259,13 +259,15 @@ class API(metaclass=SINGLETON):
     def Weekly_Answer_Topics(self) -> ParseResult:
         """
         Weekly_Answer_Topics -> ParseResult
-        每周答题总览api
+        每周答题总览api，由于每周答题2021/01/10改版，所有答题不过期，所以将获取往期未答；
+            而目前总共为3页，所以num从3开始，其实可以调整pageSize的大小，一次性将题目列表
+            全部获取，但不是正常的操作。
 
         :return: ParseResult
         """
         return urlparse(
             url="https://pc-proxy-api.xuexi.cn/api/exam/service/practice/pc"
-                "/weekly/more?pageSize=50&pageNo=1"
+                "/weekly/more?pageSize=50&pageNo={num}"
         )
 
     @property
@@ -301,13 +303,15 @@ class API(metaclass=SINGLETON):
     def Project_Answer_Topics(self) -> ParseResult:
         """
         Project_Answer_Topics -> ParseResult
-        专项答题总览api
+        专项答题总览api，由于每周答题2021/01/10改版，所有答题不过期，所以将获取往期未答；
+            而目前总共为5页，所以num从5开始，其实可以调整pageSize的大小，一次性将题目列表
+            全部获取，但不是正常的操作。
 
         :return: ParseResult
         """
         return urlparse(
             url="https://pc-proxy-api.xuexi.cn/api/exam/service/paper/pc"
-                "/list?pageSize=50&pageNo=1"
+                "/list?pageSize=50&pageNo={num}"
         )
 
     @property
