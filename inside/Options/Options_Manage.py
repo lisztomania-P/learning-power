@@ -79,7 +79,9 @@ class OPTIONS_MANAGE(metaclass=SINGLETON):
 
         :return: None
         """
+        OPTIONS().Task_Option_Set_Off_All()
         print("可选任务:")
+        print("0、全选\t", end='')
         for key, value in OPTIONS().Task_Options.items():
             print(f"{key}、{value}\t", end='')
         print(hint if hint else '')
@@ -89,9 +91,11 @@ class OPTIONS_MANAGE(metaclass=SINGLETON):
             exit(code=0)
         try:
             options = set([int(x) for x in options.split()])
+            if 0 in options:
+                OPTIONS().Task_Option_Set_On_All()
+                return None
             if options - set(OPTIONS().Task_Options.keys()):
                 cls.Task_Options(hint="\n请输入规定的选项序号")
-            OPTIONS().Task_Option_Set_Off_All()
             for seq in options:
                 OPTIONS().Task_Option_Set_On(seq=seq)
         except ValueError:

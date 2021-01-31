@@ -122,6 +122,16 @@ class OPTIONS(metaclass=SINGLETON):
         """
         self.__task_options[seq][-1] = True
 
+    def Task_Option_Set_On_All(self) -> None:
+        """
+        Task_Option_Set_On_All() -> None
+        任务选项全选
+
+        :return: None
+        """
+        for key in self.__task_options.keys():
+            self.__task_options[key][-1] = True
+
     def Task_Option_Set_Off_All(self) -> None:
         """
         Task_Option_Set_Off_All() -> None
