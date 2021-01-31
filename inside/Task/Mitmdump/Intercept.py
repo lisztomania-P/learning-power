@@ -15,6 +15,7 @@ from typing import Dict, List
 from abc import ABCMeta, abstractmethod
 
 from mitmproxy.http import HTTPFlow
+
 __all__ = []
 
 
@@ -228,40 +229,40 @@ class Project(ABC_ANSWER):
         :param res: 包含提示的题目
         :return: List[Dict]
         """
+        res_type = res['questionDisplay']
         temp = []
-        desc = res['questionDesc']
-        options = re.findall(r"<font color=\"red\">.*?</font>", desc)
+        options = re.findall(r"<font color=\"red\">.*?</font>",
+                             res['questionDesc'])
         for index, value in enumerate(options):
             options[index] = value.split('>')[1].split('<')[0]
-        for option in options:
-            for answer in res['answers']:
-                if option in answer['content'] or answer['content'] in option:
-                    tp = {
-                        'answerId': answer['answerId'],
-                        'value': answer['label']
-                    }
-                    if tp not in temp:
-                        temp.append(tp)
-        if not temp:
-            if len(res['answers']) == 1:
-                tp = ''
-                for option in options:
-                    tp += option
-                temp.append(
-                    {
-                        'answerId': res['answers'][0]['answerId'],
-                        'value': tp
-                    }
-                )
-            else:
+        if res_type in (1, 2):
+            for option in options:
+                for answer in res['answers']:
+                    if option in answer['content'] or answer['content'] in option:
+                        tp = {
+                            'answerId': answer['answerId'],
+                            'value': answer['label']
+                        }
+                        if tp not in temp:
+                            temp.append(tp)
+            if not temp:
                 for answer in res['answers']:
                     if answer['content'] in res['questionDesc']:
-                        temp.append(
-                            {
-                                'answerId': answer['answerId'],
-                                'value': answer['label']
-                            }
-                        )
+                        tp = {
+                            'answerId': answer['answerId'],
+                            'value': answer['label']
+                        }
+                        if tp not in temp:
+                            temp.append(tp)
+        elif res_type == 4:
+            tp = ''
+            for option in options:
+                tp += option
+            temp.append(
+                {
+                    'answerId': res['answers'][0]['answerId'],
+                    'value': tp
+                })
         return temp
 
     def Inject(self, data: bytes, res: Dict) -> bytes:
@@ -301,6 +302,7 @@ def request(up: HTTPFlow) -> None:
                     data=up.request.content,
                     res=put_data
                 )
+                print(up.request.content)
                 print("注入成功")
             except JSONDecodeError:
                 print("检测到本次提交为干扰")
@@ -313,6 +315,7 @@ def response(down: HTTPFlow):
                 global put_data, gear
                 put_data = g.Extract(data=down.response.content)
                 gear = g
+                print(put_data)
                 print("抓取答案完成")
             except JSONDecodeError:
                 pass
