@@ -7,6 +7,8 @@
 # @File     : Network.py
 # @Function : 网络日志
 import json
+import psutil
+import gc
 from _queue import Empty
 from queue import Queue
 from threading import Thread
@@ -59,6 +61,9 @@ class NETWORK(metaclass=SINGLETON):
                 try:
                     url = log['message']['message']['params']['request']['url']
                     requestId = log['message']['message']['params']['requestId']
+                    while psutil.virtual_memory().used / psutil.virtual_memory().total >= 0.95:
+                        gc.collect()
+                        continue
                     self.__queue.put({url: requestId})
                 except KeyError:
                     continue
