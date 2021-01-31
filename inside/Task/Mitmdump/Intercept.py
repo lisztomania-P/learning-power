@@ -235,23 +235,33 @@ class Project(ABC_ANSWER):
             options[index] = value.split('>')[1].split('<')[0]
         for option in options:
             for answer in res['answers']:
-                if option == answer['content']:
+                if option in answer['content'] or answer['content'] in option:
                     tp = {
                         'answerId': answer['answerId'],
                         'value': answer['label']
                     }
                     if tp not in temp:
                         temp.append(tp)
-        if not temp and len(res['answers']) == 1:
-            tp = ''
-            for option in options:
-                tp += option
-            temp.append(
-                {
-                    'answerId': res['answers'][0]['answerId'],
-                    'value': tp
-                }
-            )
+        if not temp:
+            if len(res['answers']) == 1:
+                tp = ''
+                for option in options:
+                    tp += option
+                temp.append(
+                    {
+                        'answerId': res['answers'][0]['answerId'],
+                        'value': tp
+                    }
+                )
+            else:
+                for answer in res['answers']:
+                    if answer['content'] in res['questionDesc']:
+                        temp.append(
+                            {
+                                'answerId': answer['answerId'],
+                                'value': answer['label']
+                            }
+                        )
         return temp
 
     def Inject(self, data: bytes, res: Dict) -> bytes:
