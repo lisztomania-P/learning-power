@@ -255,14 +255,25 @@ class Project(ABC_ANSWER):
                         if tp not in temp:
                             temp.append(tp)
         elif res_type == 4:
-            tp = ''
-            for option in options:
-                tp += option
-            temp.append(
-                {
-                    'answerId': res['answers'][0]['answerId'],
-                    'value': tp
-                })
+            num = res['body'].count('（）')
+            if num == 1:
+                tp = ''
+                for option in options:
+                    tp += option
+                temp.append(
+                    {
+                        'answerId': res['answers'][0]['answerId'],
+                        'value': tp
+                    }
+                )
+            else:
+                for index, option in enumerate(options):
+                    temp.append(
+                        {
+                            'answerId': res['answers'][index]['answerId'],
+                            'value': option
+                        }
+                    )
         return temp
 
     def Inject(self, data: bytes, res: Dict) -> bytes:
@@ -302,7 +313,6 @@ def request(up: HTTPFlow) -> None:
                     data=up.request.content,
                     res=put_data
                 )
-                print(up.request.content)
                 print("注入成功")
             except JSONDecodeError:
                 print("检测到本次提交为干扰")
@@ -315,7 +325,6 @@ def response(down: HTTPFlow):
                 global put_data, gear
                 put_data = g.Extract(data=down.response.content)
                 gear = g
-                print(put_data)
                 print("抓取答案完成")
             except JSONDecodeError:
                 pass
