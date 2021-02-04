@@ -232,6 +232,32 @@ class DB_CHECK(metaclass=SINGLETON):
             db_create.Video()
             print(f"视频表为<{DB_CONFIG().Video}>")
 
+    def Check_Project(self, connect: Connection, db_create: DB_CREATE,
+                      cursor: Cursor) -> None:
+        """
+        Check_Project(connect: Connection, db_create: DB_CREATE,
+                    cursor: Cursor) -> None
+        检查专项答题表是否存在，不存在则创建
+
+        :param connect: 数据库连接对象
+        :param db_create: 数据库创建操作对象
+        :param cursor: 光标
+        :return: None
+        """
+        if not self._Check_Table(
+                connect=connect,
+                cursor=cursor,
+                table_name=DB_CONFIG().Project,
+                table_info=(
+                        DB_CONFIG().Project_Fields,
+                        DB_CONFIG().Project_Fields_Types
+                )
+        ):
+            print(f"检测到专项答题表<{DB_CONFIG().Project}>未创建\n"
+                  f"自动创建中")
+            db_create.Project()
+            print(f"视频表为<{DB_CONFIG().Project}>")
+
     def Check_Table(self, connect: Connection, cursor: Cursor) -> None:
         """
         Check_Table(connect: Connection, cursor: Cursor) -> None
@@ -246,3 +272,4 @@ class DB_CHECK(metaclass=SINGLETON):
         self.Check_Task(connect=connect, db_create=db_create, cursor=cursor)
         self.Check_Article(connect=connect, db_create=db_create, cursor=cursor)
         self.Check_Video(connect=connect, db_create=db_create, cursor=cursor)
+        self.Check_Project(connect=connect, db_create=db_create, cursor=cursor)
