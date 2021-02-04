@@ -156,4 +156,5 @@ class TASK_INIT(metaclass=SINGLETON):
             data = json.loads(base64.b64decode(data['data_str']).decode('utf-8'))
             for topic in data['list'][::-1]:
                 if (not topic['overdue']) and (not topic['seeSolution']):
-                    return topic['id']
+                    if not DB_MANAGE().Project.Exist(pid=topic['id']):
+                        return topic['id']
