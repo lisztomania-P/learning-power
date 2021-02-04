@@ -135,3 +135,33 @@ class DB_CONFIG(metaclass=SINGLETON):
         :return: tuple
         """
         return 'INTEGER', 'TEXT', 'TEXT', 'INTEGER'
+
+    @property
+    def Project(self) -> str:
+        """
+        Project -> str
+        专项答题表名
+
+        :return: str
+        """
+        return 'project'
+
+    @property
+    def Project_Fields(self) -> tuple:
+        """
+        Project -> tuple
+        专项答题表字段
+
+        :return:tuple
+        """
+        return 'ID', 'PID'
+
+    @property
+    def Project_Fields_Types(self) -> tuple:
+        """
+        Project_Fields_Types -> tuple
+        专项答题表字段类型
+
+        :return: tuple
+        """
+        return 'INTEGER', 'INTEGER'
