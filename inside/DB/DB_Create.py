@@ -102,3 +102,20 @@ class DB_CREATE(metaclass=SINGLETON):
         );'''
         self.__cursor.execute(sql)
         self.__connect.commit()
+
+    def Project(self) -> None:
+        """
+        Project() -> None
+        专项答题表创建
+
+        :return: None
+        """
+        name = DB_CONFIG().Project
+        fields = DB_CONFIG().Project_Fields
+        fields_types = DB_CONFIG().Project_Fields_Types
+        sql = f'''CREATE TABLE {name}
+        ({fields[0]} {fields_types[0]} PRIMARY KEY AUTOINCREMENT,
+        {fields[1]} {fields_types[1]} NOT NULL
+        );'''
+        self.__cursor.execute(sql)
+        self.__connect.commit()
