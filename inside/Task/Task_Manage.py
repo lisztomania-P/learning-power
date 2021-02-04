@@ -19,6 +19,7 @@ from inside.Task.Task_Answer import TASK_ANSWER
 from inside.Task.Task_Article_Video import TASK_ARTICLE_VIDEO
 from inside.Task.Task_Init import TASK_INIT
 from inside.Template.Meta_Singleton import SINGLETON
+from inside.Template.Task_Exception import TASK_EXCEPTION
 from inside.Tools.Output import OUTPUT
 
 __all__ = ['TASK_MANAGE']
@@ -189,7 +190,10 @@ class TASK_MANAGE(metaclass=SINGLETON):
                     print("没有专项答题任务了")
                     break
                 temp = TASK_ANSWER(driver=self.__driver)
-                temp.Do(link=API().Project_Answer_Topic.geturl().format(num=iid))
+                try:
+                    temp.Do(link=API().Project_Answer_Topic.geturl().format(num=iid))
+                except TASK_EXCEPTION:
+                    DB_MANAGE().Project.Insert(pid=iid)
                 OUTPUT.Info()
                 self.__answer_time = (time.time(), True)
             else:
