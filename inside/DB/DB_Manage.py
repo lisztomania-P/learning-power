@@ -10,6 +10,7 @@ import sqlite3
 from inside.Config.Path import PATH
 from inside.DB.DB_Article import DB_ARTICLE
 from inside.DB.DB_Check import DB_CHECK
+from inside.DB.DB_Project import DB_PROJECT
 from inside.DB.DB_Task import DB_TASK
 from inside.DB.DB_User import DB_USER
 from inside.DB.DB_Video import DB_VIDEO
@@ -86,3 +87,13 @@ class DB_MANAGE(metaclass=SINGLETON):
         :return: DB_VIDEO
         """
         return DB_VIDEO(connect=self.__connect, cursor=self.__cursor)
+
+    @property
+    def Project(self) -> DB_PROJECT:
+        """
+        Project -> DB_PROJECT
+        专项答题表操作对象
+
+        :return: DB_PROJECT
+        """
+        return DB_PROJECT(connect=self.__connect, cursor=self.__cursor)
