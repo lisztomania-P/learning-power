@@ -13,11 +13,13 @@ from tqdm import tqdm
 from typing import List
 
 from selenium.common.exceptions import StaleElementReferenceException, \
-    ElementClickInterceptedException, TimeoutException
+    ElementClickInterceptedException, TimeoutException, \
+    NoAlertPresentException, NoSuchElementException
 from selenium.webdriver.chrome.webdriver import WebDriver
 
 from inside.Config.Api import API
 from inside.Template.Meta_Singleton import SINGLETON
+from inside.Template.Task_Exception import TASK_EXCEPTION
 from inside.Tools.Network import NETWORK
 
 from selenium.webdriver.remote.webelement import WebElement
@@ -72,14 +74,14 @@ class TASK_ANSWER(metaclass=SINGLETON):
         topic_seq: WebElement = self.__wait.until(topic_seq_ec)
         return topic_seq.text.strip()
 
-    def Topic_Input(self) -> WebElement:
+    def Topic_Input(self) -> List[WebElement]:
         """
         Topic_Input() -> WebElement
         填空题输入框
 
         :return: WebElement
         """
-        topic_input_ec = EC.presence_of_element_located(
+        topic_input_ec = EC.presence_of_all_elements_located(
             (
                 By.TAG_NAME, 'input'
             )
@@ -134,6 +136,33 @@ class TASK_ANSWER(metaclass=SINGLETON):
                 ):
                     return True
 
+    def __Error(self) -> bool:
+        """
+        __Error() -> bool
+        检测是否有弹窗
+
+        :return: bool
+        """
+        try:
+            time.sleep(1)
+            self.__driver.find_element_by_class_name(
+                name='ant-modal-content')
+            return True
+        except NoSuchElementException:
+            return False
+
+    def __Alert(self) -> None:
+        """
+        __Alert() -> None
+        检测弹窗，并点击确认
+
+        :return: None
+        """
+        try:
+            self.__driver.switch_to.alert.accept()
+        except NoAlertPresentException:
+            pass
+
     def __Do(self) -> None:
         """
         __Do() -> None
@@ -142,18 +171,20 @@ class TASK_ANSWER(metaclass=SINGLETON):
         :return: None
         """
         topic_type = self.Topic_Type()
+        print(topic_type)
         if '填空题' in topic_type:
-            answer = self.Topic_Input()
-            answer.send_keys('1')
+            for answer in self.Topic_Input():
+                answer.send_keys('1')
         elif [x for x in ('单选题', '多选题') if x in topic_type]:
-            answer = self.Topic_Options()
-            for op in answer:
-                op.click()
+            for answer in self.Topic_Options():
+                answer.click()
         time.sleep(0.1)
         topic_seq = self.Topic_Seq()
         while self.Topic_Seq() == topic_seq:
             topic_submit = self.Topic_Submit()
             topic_submit.click()
+            if self.__Error():
+                raise TASK_EXCEPTION('失败')
 
     def Do(self, link: str) -> None:
         """
@@ -165,6 +196,7 @@ class TASK_ANSWER(metaclass=SINGLETON):
         """
         self.__network.Clear()
         self.__driver.get(url=link)
+        self.__Alert()
         seq = int(self.Topic_Seq().split('/')[-1])
         bar = tqdm(
             desc='答题',
