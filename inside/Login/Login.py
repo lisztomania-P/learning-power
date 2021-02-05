@@ -239,6 +239,8 @@ class LOGIN(object):
                     iid = temp
                     break
                 status = self.__Get_QR_Status_Network(key=key, value=value)
+                if status == 11019:
+                    return False
                 req = True if status == -1 else False
             if not network and state and iid and status and req:
                 qr_data = {
@@ -254,8 +256,6 @@ class LOGIN(object):
                 return True
             elif status == 11021:
                 continue
-            elif status == 11019:
-                return False
 
     def _Login(self) -> bool:
         """
