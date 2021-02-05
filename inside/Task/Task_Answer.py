@@ -171,13 +171,13 @@ class TASK_ANSWER(metaclass=SINGLETON):
         :return: None
         """
         topic_type = self.Topic_Type()
-        print(topic_type)
         if '填空题' in topic_type:
             for answer in self.Topic_Input():
                 answer.send_keys('1')
         elif [x for x in ('单选题', '多选题') if x in topic_type]:
             for answer in self.Topic_Options():
-                answer.click()
+                while answer.get_attribute(name='class') == 'q-answer choosable':
+                    answer.click()
         time.sleep(0.1)
         topic_seq = self.Topic_Seq()
         while self.Topic_Seq() == topic_seq:
