@@ -15,7 +15,7 @@ from typing import Dict, List
 from inside.Task.Mitmdump.Intercept.ABC_Answer import ABC_ANSWER
 
 from inside.Baidu_AI.Baidu_AI_Manage import BAIDU_AI_MANAGE
-from inside.Options.Options import OPTIONS
+from inside.Config.Path import PATH
 __all__ = ['PROJECT']
 
 
@@ -93,7 +93,10 @@ class PROJECT(ABC_ANSWER):
                         if tp not in temp:
                             temp.append(tp)
         elif res_type == 4:
-            if OPTIONS().Baidu_AI:
+            with open(PATH().Baidu_AI_On, 'r', encoding='utf-8') as f:
+                on = f.read()
+                f.close()
+            if on == '1':
                 if res['questionDesc'] == '请观看视频':
                     body = res['body']
                     value = BAIDU_AI_MANAGE.Tools().Answer(video_link=res['videoUrl'])
@@ -104,7 +107,7 @@ class PROJECT(ABC_ANSWER):
                     while True:
                         daan = input(":").strip().split()
                         check = [ck for ck in daan if ck in value]
-                        if len(check) != len(daan):
+                        if len(check) != len(daan) or not daan:
                             print("输入非答案，重新输入！")
                             continue
                         break
