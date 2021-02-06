@@ -14,6 +14,7 @@ from typing import List
 from inside.Config.Api import API
 from inside.DB.DB_Manage import DB_MANAGE
 from inside.DB.Table_Class.Article import ARTICLE
+from inside.DB.Table_Class.Project import PROJECT
 from inside.DB.Table_Class.Task import TASK
 from inside.DB.Table_Class.Video import VIDEO
 from inside.Template.Meta_Singleton import SINGLETON
@@ -156,5 +157,5 @@ class TASK_INIT(metaclass=SINGLETON):
             data = json.loads(base64.b64decode(data['data_str']).decode('utf-8'))
             for topic in data['list'][::-1]:
                 if (not topic['overdue']) and (not topic['seeSolution']):
-                    if not DB_MANAGE().Project.Exist(pid=topic['id']):
+                    if not DB_MANAGE().Project.Exist(project=PROJECT(pid=topic['id'])):
                         return topic['id']
