@@ -6,6 +6,7 @@
 # @Version  : Python 3.8.5
 # @File     : Options_Manage.py
 # @Function : 选项管理
+from inside.Config.Path import PATH
 from inside.Baidu_AI.Baidu_AI_Manage import BAIDU_AI_MANAGE
 from inside.Options.Options import OPTIONS
 
@@ -73,8 +74,14 @@ class OPTIONS_MANAGE(metaclass=SINGLETON):
         if baidu_ai in ['y', 'Y']:
             OPTIONS().Baidu_AI = True
             BAIDU_AI_MANAGE.Verify()
+            with open(PATH().Baidu_AI_On, 'w', encoding='utf-8') as f:
+                f.write("1")
+                f.close()
         else:
             OPTIONS().Baidu_AI = False
+            with open(PATH().Baidu_AI_On, 'w', encoding='utf-8') as f:
+                f.write("0")
+                f.close()
 
     @classmethod
     def Init_Options(cls) -> None:
