@@ -165,3 +165,33 @@ class DB_CONFIG(metaclass=SINGLETON):
         :return: tuple
         """
         return 'INTEGER', 'INTEGER'
+
+    @property
+    def Baidu_AI(self) -> str:
+        """
+        Baidu_AI -> str
+        百度AI表名
+
+        @return: str
+        """
+        return 'baidu_ai'
+
+    @property
+    def Baidu_AI_Fields(self) -> tuple:
+        """
+        Baidu_AI_Fields -> tuple
+        百度AI表字段名
+
+        :return: tuple
+        """
+        return 'ID', 'AK', 'SK'
+
+    @property
+    def Baidu_AI_Fields_Types(self) -> tuple:
+        """
+        Baidu_AI_Fields_Types -> tuple
+        百度AI表字段类型
+
+        :return: tuple
+        """
+        return 'INTEGER', 'TEXT', 'TEXT'
