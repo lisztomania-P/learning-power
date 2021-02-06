@@ -34,7 +34,7 @@ class MITMDUMP(metaclass=SINGLETON):
         """
         if not hasattr(self, self.__self+'__mitmdump') or self.__mitmdump.poll():
             self.__mitmdump = subprocess.Popen(
-                ['mitmdump', '-q', '-p', '8080', '-s', PATH().Intercept]
+                ['mitmdump', '-q', '-p', '8080', '-s', PATH().Script]
             )
 
     def Close(self) -> None:
