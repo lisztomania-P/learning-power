@@ -4,7 +4,7 @@
 
 > 学习强国自动化脚本，解放你的时间！
 >
-> 使用Selenium、requests、mitmpoxy开发而成
+> 使用Selenium、requests、mitmpoxy、百度智能云文字识别开发而成
 
 
 
@@ -52,17 +52,47 @@
 
 > ![image-20210127134017543](https://i.loli.net/2021/01/27/TNXRhOM12KC5lBf.png)
 >
-> ![image-20210127134119092](https://i.loli.net/2021/01/27/Pmx1fA8X7Mnge4t.png)
+> ![image-20210207000645085](https://i.loli.net/2021/02/07/oN3wudgqn8zKiDX.png)
 >
-> ![image-20210127134308908](https://i.loli.net/2021/01/27/gErHShvk8K4RMi1.png)
+> ![image-20210207000823436](https://i.loli.net/2021/02/07/5DbiwCL6ZQK3fMu.png)
 >
-> ![image-20210127134347651](https://i.loli.net/2021/01/27/OvfDuEPlK3bgFzy.png)
+> ![image-20210207001005808](https://i.loli.net/2021/02/07/Rt6udzivIks7Cl2.png)
 >
-> ![image-20210127134421058](https://i.loli.net/2021/01/27/rtNh6G45gQwlPZ3.png)
+> ![image-20210207001047255](https://i.loli.net/2021/02/07/FKgL1yf6cqpa4Bi.png)
 >
-> ![image-20210127134546758](https://i.loli.net/2021/01/27/vW68eRVsCcfbGdj.png)
+> ![image-20210207001122282](https://i.loli.net/2021/02/07/dXRsVLnjzvKtQ9l.png)
 >
-> ![image-20210127134711113](https://i.loli.net/2021/01/27/EKfCpTPoVbRqQmz.png)
+> ![image-20210207001149837](https://i.loli.net/2021/02/07/aOqSbpMywn6Xel3.png)
+>
+> ![image-20210207001303406](https://i.loli.net/2021/02/07/W5X4RQcGljiUZJw.png)
+>
+> ![image-20210207001404717](https://i.loli.net/2021/02/07/6MXVxlvuBk5OFi3.png)
+
+
+
+## 百度智能云操作流程
+
+> 1、登录控制台
+>
+> 点击→[百度智能云](https://login.bce.baidu.com/?account=&redirect=http://console.bce.baidu.com/ai/#/ai/ocr/overview/index, "百度智能云")
+>
+> ![image-20210206231654368](https://i.loli.net/2021/02/06/fS9zDyHXx4jILgB.png)
+>
+> 2、创建应用
+>
+> ![image-20210206235118045](https://i.loli.net/2021/02/06/Z5Cx2RhylLBITni.png)
+>
+> 3、选择选项
+>
+> ![image-20210206235421370](https://i.loli.net/2021/02/06/tnqzByNGEIDSvJY.png)
+>
+> ![image-20210206235616741](https://i.loli.net/2021/02/06/vpT9MYQ8dtFVGAD.png)
+>
+> 4、获取API Key、Secret Key
+>
+> ![image-20210207000519698](https://i.loli.net/2021/02/07/JkDVs4hwn7EN8xd.png)
+
+
 
 
 
@@ -72,7 +102,8 @@
 > - [ ] ~~v0.2：优化文章、优化视频、每日答题（百分百正确），分数30~~
 > - [ ] ~~v0.3：新增每周答题、专项答题（也是百分百正确），分数45~~
 > - [ ] ~~v0.31：优化记录存储、优化目录结构、优化配置文件结构，增加进度条、增加自动下载驱动、增加系统兼容（Linux、Windows、MacOS）~~
-> - [x] v1.0: 重构整个项目，增加持久化、驱动自动检测与谷歌浏览器匹配、驱动自主下载、更快的登录、文章和视频自适应、更快更精准的答题、加强的防检测、每个文件都有说明注释(便于各位大佬修改)
+> - [ ] ~~v1.0:  重构整个项目，增加持久化、驱动自动检测与谷歌浏览器匹配、驱动自主下载、更快的登录、文章和视频自适应、更快更精准的答题、加强的防检测、每个文件都有说明注释(便于各位大佬修改)~~
+> - [x] v1.1: 由于专项答题视频答案匹配问题，现加入百度智能云的文字识别功能，可将视频中的答案提取出来，不过答案还需手动填写，因为提取的答案暂时没有好的办法过滤。至少不用看视频了是不2333.
 
 
 
