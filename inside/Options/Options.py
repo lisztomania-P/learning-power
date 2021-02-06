@@ -25,6 +25,7 @@ class OPTIONS(metaclass=SINGLETON):
         self.__mute_audio = True
         self.__headless = True
         self.__token = True
+        self.__baidu_ai = False
         self.__task_options = {
             1: ['文章', False],
             2: ['视频', False],
@@ -191,3 +192,28 @@ class OPTIONS(metaclass=SINGLETON):
         :return: bool
         """
         return self.__task_options[5][-1]
+
+    @property
+    def Baidu_AI(self) -> bool:
+        """
+        Baidu_AI -> bool
+        百度AI选项
+
+        Returns: bool
+
+        """
+        return self.__baidu_ai
+
+    @Baidu_AI.setter
+    def Baidu_AI(self, on: bool) -> None:
+        """
+        Baidu_AI = on: bool
+        设置百度AI选项
+
+        Args:
+            on: bool
+
+        Returns: None
+
+        """
+        self.__baidu_ai = on

@@ -6,6 +6,7 @@
 # @Version  : Python 3.8.5
 # @File     : Options_Manage.py
 # @Function : 选项管理
+from inside.Baidu_AI.Baidu_AI_Manage import BAIDU_AI_MANAGE
 from inside.Options.Options import OPTIONS
 
 from inside.Template.Meta_Singleton import SINGLETON
@@ -60,6 +61,22 @@ class OPTIONS_MANAGE(metaclass=SINGLETON):
             OPTIONS().Token = False
 
     @classmethod
+    def __Baidu_AI(cls) -> None:
+        """
+        __Baidu_AI() -> None
+        百度AI选项(默认：False)
+
+        Returns: None
+
+        """
+        baidu_ai = input('是否使用百度AI(y/N):').strip()
+        if baidu_ai in ['y', 'Y']:
+            OPTIONS().Baidu_AI = True
+            BAIDU_AI_MANAGE.Verify()
+        else:
+            OPTIONS().Baidu_AI = False
+
+    @classmethod
     def Init_Options(cls) -> None:
         """
         Options() -> None
@@ -70,6 +87,7 @@ class OPTIONS_MANAGE(metaclass=SINGLETON):
         cls.__Auto()
         cls.__Headless()
         cls.__Token()
+        cls.__Baidu_AI()
 
     @classmethod
     def Task_Options(cls, hint: str = None) -> None:
