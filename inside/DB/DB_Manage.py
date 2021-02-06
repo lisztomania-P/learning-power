@@ -9,6 +9,7 @@
 import sqlite3
 from inside.Config.Path import PATH
 from inside.DB.DB_Article import DB_ARTICLE
+from inside.DB.DB_Baidu_AI import DB_BAIDU_AI
 from inside.DB.DB_Check import DB_CHECK
 from inside.DB.DB_Project import DB_PROJECT
 from inside.DB.DB_Task import DB_TASK
@@ -97,3 +98,13 @@ class DB_MANAGE(metaclass=SINGLETON):
         :return: DB_PROJECT
         """
         return DB_PROJECT(connect=self.__connect, cursor=self.__cursor)
+
+    @property
+    def Baidu_AI(self) -> DB_BAIDU_AI:
+        """
+        Baidu_AI -> DB_BAIDU_AI
+        百度AI表操作对象
+
+        @return: DB_BAIDU_AI
+        """
+        return DB_BAIDU_AI(connect=self.__connect, cursor=self.__cursor)
