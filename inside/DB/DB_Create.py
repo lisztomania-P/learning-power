@@ -119,3 +119,21 @@ class DB_CREATE(metaclass=SINGLETON):
         );'''
         self.__cursor.execute(sql)
         self.__connect.commit()
+
+    def Baidu_AI(self) -> None:
+        """
+        Baidu_AI() -> None
+        百度AI表创建
+
+        :return: None
+        """
+        name = DB_CONFIG().Baidu_AI
+        fields = DB_CONFIG().Baidu_AI_Fields
+        fields_types = DB_CONFIG().Baidu_AI_Fields_Types
+        sql = f'''CREATE TABLE {name}
+        ({fields[0]} {fields_types[0]} PRIMARY KEY AUTOINCREMENT,
+        {fields[1]} {fields_types[1]} NOT NULL,
+        {fields[2]} {fields_types[2]} NOT NULL
+        );'''
+        self.__cursor.execute(sql)
+        self.__connect.commit()
