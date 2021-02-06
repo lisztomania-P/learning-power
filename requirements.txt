@@ -6,3 +6,5 @@ beautifulsoup4~=4.9.3
 mitmproxy~=6.0.2
 lxml~=4.6.2
 psutil~=5.8.0
+opencv-python~=4.5.1.48
+Pillow~=8.1.0
