@@ -9,9 +9,10 @@
 from sqlite3 import Connection, Cursor
 
 from inside.DB.DB_Config import DB_CONFIG
+from inside.DB.Table_Class.Project import PROJECT
 from inside.Template.Meta_Singleton import SINGLETON
 
-__all__ = []
+__all__ = ['DB_PROJECT']
 
 
 class DB_PROJECT(metaclass=SINGLETON):
@@ -29,34 +30,34 @@ class DB_PROJECT(metaclass=SINGLETON):
         self.__name = DB_CONFIG().Project
         self.__fields = DB_CONFIG().Project_Fields
 
-    def Insert(self, pid: int) -> None:
+    def Insert(self, project: PROJECT) -> None:
         """
-        Insert(pid: int) -> None
+        Insert(project: PROJECT) -> None
         插入专项答题id，如已存在则不进行操作
 
-        :param pid: 专项答题id
+        :param project: 专项答题
         :return: None
         """
-        if not self.Exist(pid=pid):
+        if not self.Exist(project=project):
             sql = f'''INSERT INTO 
                 {self.__name} (
                 {self.__fields[1]}) 
                 VALUES (?);'''
-            data = (pid, )
+            data = (project.Id, )
             self.__cursor.execute(sql, data)
             self.__connect.commit()
 
-    def Exist(self, pid: int) -> bool:
+    def Exist(self, project: PROJECT) -> bool:
         """
-        Exist(pid: int) -> bool
+        Exist(project: PROJECT) -> bool
         是否存在指定id
 
-        :param pid: 专项答题id
+        :param project: 专项答题
         :return: bool
         """
         sql = f'''SELECT 1 FROM {self.__name} 
                 WHERE {self.__fields[1]}=?;'''
-        data = (pid,)
+        data = (project.Id,)
         result = self.__cursor.execute(sql, data)
         try:
             next(result)
