@@ -86,9 +86,9 @@ class PATH(metaclass=SINGLETON):
         return os.path.join(self.Base, 'Temp')
 
     @property
-    def Intercept(self) -> str:
+    def Script(self) -> str:
         """
-        Intercept -> str
+        Script -> str
         拦截注入脚本绝对路径
 
         :return: str
@@ -101,3 +101,13 @@ class PATH(metaclass=SINGLETON):
         if xt == 'macOs':
             temp = temp.replace(os.path.expanduser('~'), '~')
         return temp
+
+    @property
+    def Baidu_AI_On(self) -> str:
+        """
+        百度AI开关共享文件
+
+        Returns: str
+
+        """
+        return os.path.join(os.path.dirname(self.Script), 'on')
