@@ -13,6 +13,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 
 from inside.Config.Api import API
 from inside.DB.DB_Manage import DB_MANAGE
+from inside.DB.Table_Class.Project import PROJECT
 from inside.Info.Info_Manage import INFO_MANAGE
 from inside.Options.Options import OPTIONS
 from inside.Task.Task_Answer import TASK_ANSWER
@@ -193,7 +194,7 @@ class TASK_MANAGE(metaclass=SINGLETON):
                 try:
                     temp.Do(link=API().Project_Answer_Topic.geturl().format(num=iid))
                 except TASK_EXCEPTION:
-                    DB_MANAGE().Project.Insert(pid=iid)
+                    DB_MANAGE().Project.Insert(PROJECT(pid=iid))
                 OUTPUT.Info()
                 self.__answer_time = (time.time(), True)
             else:
