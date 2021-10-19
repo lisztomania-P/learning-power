@@ -121,20 +121,16 @@ class GET_INFO(metaclass=SINGLETON):
                     cookies=self.__cookie
                 )
                 data = html.json()
-                for rule in data['data']['dayScoreDtos']:
-                    task = self.__info.Task_Bar.get(rule['ruleId'])
-                    if not task:
-                        ruleId = rule['ruleId']
-                        name = rule['name']
-                        desc = rule['desc']
-                        currentScore = rule['currentScore']
-                        dayMaxScore = rule['dayMaxScore']
-                        task = TASK_INFO(
+                for rule in data['data']['taskProgress']:
+                    ruleId = rule['displayRuleId']
+                    name = rule['title']
+                    desc = rule['ruleDesc']
+                    currentScore = rule['currentScore']
+                    dayMaxScore = rule['dayMaxScore']
+                    task = TASK_INFO(
                             ruleId=ruleId, name=name, desc=desc,
                             currentScore=currentScore, dayMaxScore=dayMaxScore
                         )
-                    else:
-                        task.Current_Score = rule['currentScore']
                     self.__info.Update_Task_Bar_Info(task_info=task)
                 break
             except TypeError:

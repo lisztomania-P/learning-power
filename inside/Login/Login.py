@@ -245,7 +245,7 @@ class LOGIN(object):
             if not network and state and iid and status and req:
                 qr_data = {
                     'qrCode': iid,
-                    'goto': 'https://oa.xuexi.cn',
+                    'goto': 'https://www.xuexi.cn',
                     'pdmToken': ''
                 }
                 status = self.__Get_QR_Status_Requests(
