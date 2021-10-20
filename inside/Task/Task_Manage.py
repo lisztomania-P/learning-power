@@ -96,14 +96,9 @@ class TASK_MANAGE(metaclass=SINGLETON):
         """
         while True:
             bar = INFO_MANAGE().Task_Bar
-            p = bar[1].Day_Max_Score - bar[1].Current_Score
-            c = bar[1002].Day_Max_Score - bar[1002].Current_Score
-            if p and not c:
-                self.__Article(num=p, tq=1)
-            elif p and c:
-                self.__Article(num=p, tq=(c*4)//p)
-            elif not p and c:
-                self.__Article(num=1, tq=c*4)
+            if bar['193549965443299840'].Current_Score != bar['193549965443299840'].Day_Max_Score:
+                p = bar['193549965443299840'].Day_Max_Score - bar['193549965443299840'].Current_Score
+                self.__Article(num=p, tq=5)
             else:
                 break
 
@@ -116,8 +111,8 @@ class TASK_MANAGE(metaclass=SINGLETON):
         """
         while True:
             bar = INFO_MANAGE().Task_Bar
-            p = bar[2].Day_Max_Score - bar[2].Current_Score
-            c = bar[1003].Day_Max_Score - bar[1003].Current_Score
+            p = bar['193551054368504064'].Day_Max_Score - bar['193551054368504064'].Current_Score
+            c = bar['193551711926319360'].Day_Max_Score - bar['193551711926319360'].Current_Score
             if p and not c:
                 self.__Video(num=p, tq=1)
             elif p and c:
@@ -136,7 +131,7 @@ class TASK_MANAGE(metaclass=SINGLETON):
         """
         while True:
             bar = INFO_MANAGE().Task_Bar
-            if bar[6].Current_Score != bar[6].Day_Max_Score:
+            if bar['193552647163836928'].Current_Score != bar['193552647163836928'].Day_Max_Score:
                 if self.__answer_time[-1]:
                     if time.time() - self.__answer_time[0] <= 10:
                         continue
@@ -156,7 +151,7 @@ class TASK_MANAGE(metaclass=SINGLETON):
         """
         while True:
             bar = INFO_MANAGE().Task_Bar
-            if bar[5].Current_Score != bar[5].Day_Max_Score:
+            if bar['193554171675900416'].Current_Score != bar['193554171675900416'].Day_Max_Score:
                 if self.__answer_time[-1]:
                     if time.time() - self.__answer_time[0] <= 10:
                         continue
@@ -181,7 +176,7 @@ class TASK_MANAGE(metaclass=SINGLETON):
         """
         while True:
             bar = INFO_MANAGE().Task_Bar
-            if bar[4].Current_Score != bar[4].Day_Max_Score:
+            if bar['193561952390838784'].Current_Score != bar['193561952390838784'].Day_Max_Score:
                 if self.__answer_time[-1]:
                     if time.time() - self.__answer_time[0] <= 10:
                         continue

@@ -144,7 +144,7 @@ class API(metaclass=SINGLETON):
         :return: ParseResult
         """
         return urlparse(
-            url="https://pc-api.xuexi.cn/open/api/score/today/queryrate"
+            url="https://pc-proxy-api.xuexi.cn/api/score/days/listScoreProgress?sence=score&deviceType=2"
         )
 
     @property
